@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "main": "src/index.js",
   "scripts": {
-    "serve": "live-server ./src/index.js"
+    "serve": "live-server ./"
   },
   "dependencies": {
     "live-server": "^1.2.2"
