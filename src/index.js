@@ -7,6 +7,9 @@ let houseAsset5;
 // some value that makes sure the assets are displayed in reasonable size within the window
 let windowRatio = window.innerWidth / (window.innerWidth / 2);
 
+let cameraPositionX = 0;
+let cameraBoundsX = window.innerWidth / 2;
+
 function preload () {
 	houseAsset2 = loadImage('src/assets/2.png');
 	houseAsset3 = loadImage('src/assets/3.png');
@@ -25,6 +28,43 @@ function windowResized() {
 	// }
 }
 
+class ScrollerUI {
+	constructor(config) {
+		// how fast the camera will move
+		this.scrollSpeed = config.scrollSpeed || 1;
+		// how much of the screen on each side recognizes the cursor hovering over it
+		// and tells the camera to move
+		// a number between 0 and 1
+		this.widthY = config.widthY || 0.2;
+		this.triggerLeft = rect(
+			0,
+			0,
+			(window.innerWidth * this.widthY),
+			window.innerHeight
+			);
+		this.triggerRight = rect(
+			window.innerWidth - (window.innerWidth * this.widthY),
+			0,
+			(window.innerWidth * this.widthY),
+			window.innerHeight
+			);
+	}
+	watchMouseLeft() {
+		if (cameraPositionX !== -cameraBoundsX){
+			cameraPositionX -= this.scrollSpeed;
+		}
+	}
+	watchMouseRight() {
+		if (cameraPositionX !== cameraBoundsX){
+			cameraPositionX += this.scrollSpeed;
+		}
+	}
+
+}
+
+let leftScrollerUI;
+let rightScrollerUI;
+
 class House {
 	constructor(config) {
 		this.desiredScale = config.desiredScale || 0.5;
@@ -37,7 +77,7 @@ class House {
 		// position
 		translate(
 			window.innerWidth * this.xOnLayer, 
-			window.innerHeight + layerOnY);
+			window.innerHeight);
 		scale(this.desiredScale);
 		translate(
 			// origin in the middle horizontally of image
@@ -59,8 +99,14 @@ class LayerOfHouses {
 	}
 	drawLayerOfHouses() {
 		push();
+		// ensure the centered houses remain centered on screen
 		translate((window.innerWidth / 2), 0);
+		// apply scaling based on layer
 		scale(this.layerScale);
+		// move whole layer on X
+		translate(
+			map(cameraPositionX, -cameraBoundsX, cameraBoundsX, -cameraBoundsX, cameraBoundsX)
+			,0);
 		this.housesArray.forEach(house => {
 			house.drawHouse(this.layerScale, this.layerOnY);
 		});
@@ -71,7 +117,6 @@ class LayerOfHouses {
 let housesFront;
 let housesMiddle;
 let housesBack;
-let mouseInputActions;
 
 function setup() {
 	wholeCanvas = createCanvas(window.innerWidth, window.innerHeight);
@@ -169,17 +214,32 @@ function setup() {
 }
 
 function draw() {
-	background(23, 20, 29);
-	housesBack.layerScale = map(mouseY, 0, window.innerHeight, 1, 1.2);
-	housesBack.layerOnY = map(mouseY, 0, (window.innerHeight * 2), -(window.innerHeight * 0.4), (window.innerHeight / 10));
+	background(242, 244, 243);
+	housesBack.layerScale = map(mouseY, window.innerHeight, 0, 0.8, 1.2);
+	housesBack.layerOnY = map(mouseY, (window.innerHeight * 2), 0, -(window.innerHeight * 0.4), (window.innerHeight / 10));
 	
-	housesMiddle.layerScale = map(mouseY, 0, window.innerHeight, 1, 1.6);
-	housesMiddle.layerOnY = map(mouseY, 0, (window.innerHeight * 2), -(window.innerHeight * 0.4), (window.innerHeight / 6));
+	housesMiddle.layerScale = map(mouseY, window.innerHeight, 0, 0.8, 1.6);
+	housesMiddle.layerOnY = map(mouseY, (window.innerHeight * 2), 0, -(window.innerHeight * 0.4), (window.innerHeight / 6));
 	
-	housesFront.layerScale = map(mouseY, 0, window.innerHeight, 0.8, 1.9);
-	housesFront.layerOnY = map(mouseY, 0, (window.innerHeight * 2), -(window.innerHeight * 0.2), (window.innerHeight / 2));
+	housesFront.layerScale = map(mouseY, window.innerHeight, 0, 0.8, 1.9);
+	housesFront.layerOnY = map(mouseY, (window.innerHeight * 2), 0, -(window.innerHeight * 0.2), (window.innerHeight / 2));
 	
 	housesBack.drawLayerOfHouses();
 	housesMiddle.drawLayerOfHouses();
 	housesFront.drawLayerOfHouses();
+
+	scrollerUI = new ScrollerUI({
+		scrollSpeed: 5,
+	});
+	// leftScrollerUI.drawLeft();
+	// rightScrollerUI.drawRight();
+	if(keyIsDown(RIGHT_ARROW)){
+		scrollerUI.watchMouseLeft();		
+	}
+	if(keyIsDown(LEFT_ARROW)){
+		scrollerUI.watchMouseRight();		
+	}
+	// scrollerUI.triggerLeft.mouseOver(scrollerUI.watchMouseLeft);
+	// scrollerUI.triggerRight.mouseOver(scrollerUI.watchMouseRight);
+	
 }
