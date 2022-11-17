@@ -32,16 +32,7 @@ function windowResized() {
 	// }
 }
 
-let isMouseInsideWindow;
-
-// function checkMouseInsideWindow() {
-// 	if (mouseX > 5 
-// 		&& mouseY > 5 
-// 		&& mouseX < window.innerWidth - 5
-// 		&& mouseY < window.innerHeight - 5) {
-// 			return true;
-// 		} else { return false; }
-// }
+let isMouseInsideBrowser;
 
 class ScrollerUI {
 	constructor(config) {
@@ -73,12 +64,12 @@ class ScrollerUI {
 		return false;
 	  }
 	}
-	watchMouseLeft() {
+	scrollLeft() {
 		if (cameraPositionX <= cameraBoundsX){
 			cameraPositionX += this.scrollSpeed;
 		}
 	}
-	watchMouseRight() {
+	scrollRight() {
 		if (cameraPositionX >= -cameraBoundsX){
 			cameraPositionX -= this.scrollSpeed;
 		}
@@ -88,6 +79,38 @@ class ScrollerUI {
 
 let leftScrollerUI;
 let rightScrollerUI;
+
+class Interactable {
+	constructor(config) {
+		this.sizeX = config.sizeX || 0;
+		this.sizeY = config.sizeY || 0;
+		this.positionX = config.positionX || 0;
+		this.positionY = config.positionY || 0;
+		// current x y w h
+		this.asset;
+	}
+	isMouseOver() {
+	  if (
+		mouseX > this.positionX &&
+		mouseX < this.positionX + (window.innerWidth * this.widthY) &&
+		mouseY > 0 &&
+		mouseY < 0 + window.innerHeight
+	  ) {
+		return true;
+	  } else {
+		return false;
+	  }
+	}
+	draw() {
+		this.asset = rect(this.positionX, this.positionY, this.sizeX, this.sizeY);
+	}
+}
+
+class Window extends Interactable {
+
+}
+
+let window1;
 
 class House {
 	constructor(config) {
@@ -110,6 +133,20 @@ class House {
 			-(this.asset.height));
 		// render image
 		image(this.asset, 0, 0);
+
+		window1 = new Window({
+			sizeX: 50,
+			sizeY: 69,
+			positionX: 69,
+			positionY: 69,
+		});
+		if (window1.isMouseOver) {
+			fill(0, 153, 204);
+		}
+		window1.draw();
+		
+		
+
 		pop();
 	}
 }
@@ -145,8 +182,8 @@ let housesBack;
 function setup() {
 	wholeCanvas = createCanvas(window.innerWidth, window.innerHeight);
 	// check if mouse in inside
-	wholeCanvas.mouseOver(() => { isMouseInsideWindow = true});
-	wholeCanvas.mouseOut(() => { isMouseInsideWindow = false});
+	wholeCanvas.mouseOver(() => { isMouseInsideBrowser = true});
+	wholeCanvas.mouseOut(() => { isMouseInsideBrowser = false});
 	// gets done only once: search for better function other than mouseOver
 	// wholeCanvas.mouseOver(mouseInputActions);
 	housesFront = new LayerOfHouses({
@@ -268,12 +305,13 @@ function draw() {
 		positionX: window.innerWidth - (window.innerWidth * 0.2),
 		asset: gradientRight
 	});
-	if (isMouseInsideWindow) {
+	// for each houseLayer.house.window => handleInteraction(x, y, w, h);
+	if (isMouseInsideBrowser) {
 		if (leftScrollerUI.isMouseOver()) {
-			leftScrollerUI.watchMouseLeft();
+			leftScrollerUI.scrollLeft();
 		}
 		if (rightScrollerUI.isMouseOver()) {
-			rightScrollerUI.watchMouseRight();
+			rightScrollerUI.scrollRight();
 		}
 	}
 	
