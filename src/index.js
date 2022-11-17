@@ -3,6 +3,8 @@ let houseAsset2;
 let houseAsset3;
 let houseAsset4;
 let houseAsset5;
+let gradientLeft;
+let gradientRight;
 
 // some value that makes sure the assets are displayed in reasonable size within the window
 let windowRatio = window.innerWidth / (window.innerWidth / 2);
@@ -15,6 +17,8 @@ function preload () {
 	houseAsset3 = loadImage('src/assets/3.png');
 	houseAsset4 = loadImage('src/assets/4.png');
 	houseAsset5 = loadImage('src/assets/5.png');
+	gradientLeft = loadImage('src/assets/gradient_left.png');
+	gradientRight = loadImage('src/assets/gradient_right.png');
 }
 
 // to make it responsive
@@ -28,6 +32,11 @@ function windowResized() {
 	// }
 }
 
+let isMouseInsideWindow = true;
+function checkMouseInsideWindow() {
+	return true;
+}
+
 class ScrollerUI {
 	constructor(config) {
 		// how fast the camera will move
@@ -36,27 +45,36 @@ class ScrollerUI {
 		// and tells the camera to move
 		// a number between 0 and 1
 		this.widthY = config.widthY || 0.2;
-		this.triggerLeft = rect(
-			0,
-			0,
-			(window.innerWidth * this.widthY),
-			window.innerHeight
-			);
-		this.triggerRight = rect(
-			window.innerWidth - (window.innerWidth * this.widthY),
+		this.positionX = config.positionX || 0;
+		this.asset = config.asset || gradientLeft;
+		this.trigger = image(
+			this.asset,
+			this.positionX,
 			0,
 			(window.innerWidth * this.widthY),
 			window.innerHeight
 			);
 	}
+	isMouseOver() {
+	  if (
+		mouseX > this.positionX &&
+		mouseX < this.positionX + (window.innerWidth * this.widthY) &&
+		mouseY > 0 &&
+		mouseY < 0 + window.innerHeight
+	  ) {
+		return true;
+	  } else {
+		return false;
+	  }
+	}
 	watchMouseLeft() {
-		if (cameraPositionX !== -cameraBoundsX){
-			cameraPositionX -= this.scrollSpeed;
+		if (cameraPositionX <= cameraBoundsX){
+			cameraPositionX += this.scrollSpeed;
 		}
 	}
 	watchMouseRight() {
-		if (cameraPositionX !== cameraBoundsX){
-			cameraPositionX += this.scrollSpeed;
+		if (cameraPositionX >= -cameraBoundsX){
+			cameraPositionX -= this.scrollSpeed;
 		}
 	}
 
@@ -228,18 +246,31 @@ function draw() {
 	housesMiddle.drawLayerOfHouses();
 	housesFront.drawLayerOfHouses();
 
-	scrollerUI = new ScrollerUI({
+	leftScrollerUI = new ScrollerUI({
 		scrollSpeed: 5,
+		widthY: 0.2,
+		positionX: 0,
+		asset: gradientLeft
+	});
+	rightScrollerUI = new ScrollerUI({
+		scrollSpeed: 5,
+		widthY: 0.2,
+		positionX: window.innerWidth - (window.innerWidth * 0.2),
+		asset: gradientRight
 	});
 	// leftScrollerUI.drawLeft();
 	// rightScrollerUI.drawRight();
-	if(keyIsDown(RIGHT_ARROW)){
-		scrollerUI.watchMouseLeft();		
+	// if(keyIsDown(RIGHT_ARROW)){
+	// 	scrollerUI.watchMouseLeft();		
+	// }
+	// if(keyIsDown(LEFT_ARROW)){
+	// 	scrollerUI.watchMouseRight();		
+	// }
+	if (leftScrollerUI.isMouseOver()) {
+		leftScrollerUI.watchMouseLeft();
 	}
-	if(keyIsDown(LEFT_ARROW)){
-		scrollerUI.watchMouseRight();		
+	if (rightScrollerUI.isMouseOver()) {
+		rightScrollerUI.watchMouseRight();
 	}
-	// scrollerUI.triggerLeft.mouseOver(scrollerUI.watchMouseLeft);
-	// scrollerUI.triggerRight.mouseOver(scrollerUI.watchMouseRight);
 	
 }
