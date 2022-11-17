@@ -44,13 +44,7 @@ class ScrollerUI {
 		this.widthY = config.widthY || 0.2;
 		this.positionX = config.positionX || 0;
 		this.asset = config.asset || gradientLeft;
-		this.trigger = image(
-			this.asset,
-			this.positionX,
-			0,
-			(window.innerWidth * this.widthY),
-			window.innerHeight
-			);
+		this.trigger;
 	}
 	isMouseOver() {
 	  if (
@@ -65,11 +59,25 @@ class ScrollerUI {
 	  }
 	}
 	scrollLeft() {
+		this.trigger = image(
+			this.asset,
+			this.positionX,
+			0,
+			(window.innerWidth * this.widthY),
+			window.innerHeight
+			);
 		if (cameraPositionX <= cameraBoundsX){
 			cameraPositionX += this.scrollSpeed;
 		}
 	}
 	scrollRight() {
+		this.trigger = image(
+			this.asset,
+			this.positionX,
+			0,
+			(window.innerWidth * this.widthY),
+			window.innerHeight
+			);
 		if (cameraPositionX >= -cameraBoundsX){
 			cameraPositionX -= this.scrollSpeed;
 		}
@@ -80,7 +88,19 @@ class ScrollerUI {
 let leftScrollerUI;
 let rightScrollerUI;
 
-class Interactable {
+let divelem;
+// div construction: useful for ui later???
+		//
+		// divelem = createDiv("This is a div element");
+    	// divelem.position(this.positionX, this.positionY);
+    	// divelem.size(this.sizeX, this.sizeY);
+    	// divelem.style("border: 2px dashed");
+		// divelem.mouseOver(() => {console.log('hover')});
+
+// TODO: import Transformer
+// TODO: every class should be extended from Transformer
+
+		class Interactable {
 	constructor(config) {
 		this.sizeX = config.sizeX || 0;
 		this.sizeY = config.sizeY || 0;
@@ -88,13 +108,15 @@ class Interactable {
 		this.positionY = config.positionY || 0;
 		// current x y w h
 		this.asset;
+
+		this.isHoveredOver;
 	}
 	isMouseOver() {
 	  if (
 		mouseX > this.positionX &&
-		mouseX < this.positionX + (window.innerWidth * this.widthY) &&
-		mouseY > 0 &&
-		mouseY < 0 + window.innerHeight
+		mouseX < this.positionX + this.sizeX && 
+		mouseY > this.positionY &&
+		mouseY < this.positionY + this.sizeY 
 	  ) {
 		return true;
 	  } else {
@@ -102,7 +124,9 @@ class Interactable {
 	  }
 	}
 	draw() {
-		this.asset = rect(this.positionX, this.positionY, this.sizeX, this.sizeY);
+		// this.asset = rect(this.positionX, this.positionY, this.sizeX, this.sizeY);
+
+		
 	}
 }
 
@@ -141,6 +165,10 @@ class House {
 			positionY: 69,
 		});
 		if (window1.isMouseOver) {
+			// console.log(window1.sizeX);
+			// console.log(window1.sizeY);
+			// console.log(window1.positionX);
+			// console.log(window1.positionY);
 			fill(0, 153, 204);
 		}
 		window1.draw();
