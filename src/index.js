@@ -32,10 +32,16 @@ function windowResized() {
 	// }
 }
 
-let isMouseInsideWindow = true;
-function checkMouseInsideWindow() {
-	return true;
-}
+let isMouseInsideWindow;
+
+// function checkMouseInsideWindow() {
+// 	if (mouseX > 5 
+// 		&& mouseY > 5 
+// 		&& mouseX < window.innerWidth - 5
+// 		&& mouseY < window.innerHeight - 5) {
+// 			return true;
+// 		} else { return false; }
+// }
 
 class ScrollerUI {
 	constructor(config) {
@@ -138,6 +144,9 @@ let housesBack;
 
 function setup() {
 	wholeCanvas = createCanvas(window.innerWidth, window.innerHeight);
+	// check if mouse in inside
+	wholeCanvas.mouseOver(() => { isMouseInsideWindow = true});
+	wholeCanvas.mouseOut(() => { isMouseInsideWindow = false});
 	// gets done only once: search for better function other than mouseOver
 	// wholeCanvas.mouseOver(mouseInputActions);
 	housesFront = new LayerOfHouses({
@@ -232,6 +241,7 @@ function setup() {
 }
 
 function draw() {
+
 	background(242, 244, 243);
 	housesBack.layerScale = map(mouseY, window.innerHeight, 0, 0.8, 1.2);
 	housesBack.layerOnY = map(mouseY, (window.innerHeight * 2), 0, -(window.innerHeight * 0.4), (window.innerHeight / 10));
@@ -258,19 +268,13 @@ function draw() {
 		positionX: window.innerWidth - (window.innerWidth * 0.2),
 		asset: gradientRight
 	});
-	// leftScrollerUI.drawLeft();
-	// rightScrollerUI.drawRight();
-	// if(keyIsDown(RIGHT_ARROW)){
-	// 	scrollerUI.watchMouseLeft();		
-	// }
-	// if(keyIsDown(LEFT_ARROW)){
-	// 	scrollerUI.watchMouseRight();		
-	// }
-	if (leftScrollerUI.isMouseOver()) {
-		leftScrollerUI.watchMouseLeft();
-	}
-	if (rightScrollerUI.isMouseOver()) {
-		rightScrollerUI.watchMouseRight();
+	if (isMouseInsideWindow) {
+		if (leftScrollerUI.isMouseOver()) {
+			leftScrollerUI.watchMouseLeft();
+		}
+		if (rightScrollerUI.isMouseOver()) {
+			rightScrollerUI.watchMouseRight();
+		}
 	}
 	
 }
