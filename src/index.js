@@ -97,11 +97,89 @@ let divelem;
     	// divelem.style("border: 2px dashed");
 		// divelem.mouseOver(() => {console.log('hover')});
 
-// TODO: import Transformer
-// TODO: every class should be extended from Transformer
+// TODO: import Transformer https://github.com/ChristerNilsson/Transformer
 
-		class Interactable {
+class Transformer {
+	constructor(x2 = 0, y2 = 0, a1 = 0, s = 1, stack = []) {
+	  this.x = x2;
+	  this.y = y2;
+	  this.a = a1;
+	  this.s = s;
+	  this.stack = stack;
+	  this.commands = [];
+	}
+  
+	push() {
+	  push();
+	  return this.stack.push([this.x, this.y, this.a, this.s]);
+	}
+  
+	pop() {
+	  pop();
+	  return [this.x, this.y, this.a, this.s] = this.stack.pop();
+	}
+  
+	rotate(da) {
+	  this.commands.push(`r ${da}`);
+	  rotate(da);
+	  return this.a += da;
+	}
+  
+	scale(ds) {
+	  this.commands.push(`s ${ds}`);
+	  scale(ds);
+	  return this.s *= ds;
+	}
+  
+	translate(dx, dy) {
+	  this.commands.push(`t ${dx} ${dy}`);
+	  translate(dx, dy);
+	  this.x += this.s * dx * cos(this.a) - this.s * dy * sin(this.a);
+	  return this.y += this.s * dy * cos(this.a) + this.s * dx * sin(this.a);
+	}
+  
+	getCommands() {
+	  return _.clone(this.commands);
+	}
+  
+	backwards(x, y, commands) {
+	  var a, arr, command, dx, dy, k, len, ref, x1, y1;
+	  ref = commands.reverse();
+	  for (k = 0, len = ref.length; k < len; k++) {
+		command = ref[k];
+		arr = command.split(' ');
+		if (arr[0] === 'r') {
+		  a = -arr[1];
+		  x1 = x * cos(a) - y * sin(a);
+		  y1 = y * cos(a) + x * sin(a);
+		  [x, y] = [x1, y1];
+		}
+		if (command[0] === 's') {
+		  x = x / arr[1];
+		  y = y / arr[1];
+		}
+		if (command[0] === 't') {
+		  dx = arr[1];
+		  dy = arr[2];
+		  x -= dx;
+		  y -= dy;
+		}
+	  }
+	  return [x, y];
+	}
+  
+	dump() {
+	  return console.log(this.x, this.y, this.a, this.s);
+	}
+  
+  };
+
+let tf = new Transformer();
+
+class Interactable {
 	constructor(config) {
+		// super();
+
 		this.sizeX = config.sizeX || 0;
 		this.sizeY = config.sizeY || 0;
 		this.positionX = config.positionX || 0;
@@ -123,10 +201,29 @@ let divelem;
 		return false;
 	  }
 	}
+	isMouseOverTF() {
+	  if (
+		mouseX > tf.x &&
+		mouseX < tf.x + this.sizeX * tf.s && 
+		mouseY > tf.y &&
+		mouseY < tf.y + this.sizeY * tf.s 
+	  ) {
+		return true;
+	  } else {
+		return false;
+	  }
+	}
 	draw() {
-		// this.asset = rect(this.positionX, this.positionY, this.sizeX, this.sizeY);
-
-		
+		tf.push();
+		console.log(tf.x, tf.y, tf.s);
+		if(this.isMouseOverTF()){
+			fill('rgba(100%,0%,100%,0.5)');
+		} else {
+			fill(255, 255, 255);
+		}
+		tf.translate(mouseX * 0.5, mouseY * 0.5);
+		this.asset = rect(this.positionX, this.positionY, this.sizeX, this.sizeY);
+		tf.pop();
 	}
 }
 
@@ -157,24 +254,6 @@ class House {
 			-(this.asset.height));
 		// render image
 		image(this.asset, 0, 0);
-
-		window1 = new Window({
-			sizeX: 50,
-			sizeY: 69,
-			positionX: 69,
-			positionY: 69,
-		});
-		if (window1.isMouseOver) {
-			// console.log(window1.sizeX);
-			// console.log(window1.sizeY);
-			// console.log(window1.positionX);
-			// console.log(window1.positionY);
-			fill(0, 153, 204);
-		}
-		window1.draw();
-		
-		
-
 		pop();
 	}
 }
@@ -320,6 +399,21 @@ function draw() {
 	housesBack.drawLayerOfHouses();
 	housesMiddle.drawLayerOfHouses();
 	housesFront.drawLayerOfHouses();
+	
+	window1 = new Window({
+		sizeX: 50,
+		sizeY: 69,
+		positionX: 369,
+		positionY: 369,
+	});
+	// if (window1.isMouseOver) {
+	// 	// console.log(window1.sizeX);
+	// 	// console.log(window1.sizeY);
+	// 	// console.log(window1.positionX);
+	// 	// console.log(window1.positionY);
+	// 	fill(0, 153, 204);
+	// }
+	window1.draw();
 
 	leftScrollerUI = new ScrollerUI({
 		scrollSpeed: 5,
