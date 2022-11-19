@@ -35,6 +35,8 @@ let cameraBoundsBottom // = mapAsset.width;
 // to make it responsive
 function windowResized() {
 	resizeCanvas(window.innerWidth, window.innerHeight);
+	cameraBoundsRight = mapAsset.width - window.innerWidth;
+	cameraBoundsBottom = mapAsset.height - window.innerHeight;
 	// if on smaller screen and portrait, don't use bg image 
 	// if (window.innerHeight > window.innerWidth*1.3 && window.innerWidth < 1000) {
 	//   background(10);
@@ -44,6 +46,30 @@ function windowResized() {
 }
 
 let isMouseInsideBrowser;
+let cursorRadius = 15;
+class Cursor {
+	constructor() {
+		this.radius = cursorRadius;
+	}
+  
+	changeIcon(newImage) {
+		this.currentImage = newImage;
+	}
+  
+	display() {
+		noCursor();
+		noStroke();
+		fill(115, 120, 98, 50);
+		circle(mouseX+ (mouseX*0.03), mouseY+ (mouseY*0.03), cursorRadius+10)
+		fill(115, 120, 98);
+		circle(mouseX, mouseY, cursorRadius+10);
+		if (this.currentImage) {
+			image(this.currentImage, mouseX, mouseY, cursorRadius+5, cursorRadius+5);
+		}
+	}
+  }
+
+let cursor = new Cursor();
 
 class ScrollerUI_X {
 	constructor(config) {
@@ -52,7 +78,7 @@ class ScrollerUI_X {
 		// how much of the screen on each side recognizes the cursor hovering over it
 		// and tells the camera to move
 		// a number between 0 and 1
-		this.widthY = config.widthY || 0.2;
+		this.width = config.width || 0.2;
 		this.positionX = config.positionX || 0;
 		this.asset = config.asset || gradientLeft;
 		this.trigger;
@@ -60,7 +86,7 @@ class ScrollerUI_X {
 	isMouseOver() {
 	  if (
 		mouseX > this.positionX &&
-		mouseX < this.positionX + (window.innerWidth * this.widthY) &&
+		mouseX < this.positionX + (window.innerWidth * this.width) &&
 		mouseY > 0 &&
 		mouseY < 0 + window.innerHeight
 	  ) {
@@ -74,9 +100,12 @@ class ScrollerUI_X {
 			this.asset,
 			this.positionX,
 			0,
-			(window.innerWidth * this.widthY),
+			(window.innerWidth * this.width),
 			window.innerHeight
 			);
+		this.asset.resize(
+			(window.innerWidth * this.width),
+			window.innerHeight);
 		if (cameraPositionX <= cameraBoundsLeft){
 			cameraPositionX += this.scrollSpeed;
 		}
@@ -86,9 +115,12 @@ class ScrollerUI_X {
 			this.asset,
 			this.positionX,
 			0,
-			(window.innerWidth * this.widthY),
+			(window.innerWidth * this.width),
 			window.innerHeight
 			);
+		this.asset.resize(
+				(window.innerWidth * this.width),
+				window.innerHeight);
 		if (cameraPositionX >= -cameraBoundsRight){
 			cameraPositionX -= this.scrollSpeed;
 		}
@@ -102,7 +134,7 @@ class ScrollerUI_Y {
 		// how much of the screen on each side recognizes the cursor hovering over it
 		// and tells the camera to move
 		// a number between 0 and 1
-		this.widthX = config.widthX || 0.2;
+		this.width = config.width || 0.2;
 		this.positionY = config.positionY || 0;
 		this.asset = config.asset || gradientTop;
 		this.trigger;
@@ -112,7 +144,7 @@ class ScrollerUI_Y {
 		mouseX > 0 &&
 		mouseX < 0 + window.innerWidth &&
 		mouseY > this.positionY &&
-		mouseY < this.positionY + (window.innerHeight* this.widthX)
+		mouseY < this.positionY + (window.innerHeight* this.width)
 	  ) {
 		return true;
 	  } else {
@@ -125,8 +157,11 @@ class ScrollerUI_Y {
 			0,
 			this.positionY,
 			window.innerWidth,
-			(window.innerHeight * this.widthX),
+			(window.innerHeight * this.width),
 			);
+		this.asset.resize(
+			window.innerWidth,
+			(window.innerHeight * this.width));
 		if (cameraPositionY <= cameraBoundsTop){
 			cameraPositionY += this.scrollSpeed;
 		}
@@ -137,8 +172,11 @@ class ScrollerUI_Y {
 			0,
 			this.positionY,
 			window.innerWidth,
-			(window.innerHeight * this.widthX),
+			(window.innerHeight * this.width),
 			);
+		this.asset.resize(
+			window.innerWidth,
+			(window.innerHeight * this.width));
 		if (cameraPositionY >= -cameraBoundsBottom){
 			cameraPositionY -= this.scrollSpeed;
 		}
@@ -367,14 +405,14 @@ function setup() {
 	wholeCanvas.mouseOver(() => { isMouseInsideBrowser = true});
 	wholeCanvas.mouseOut(() => { isMouseInsideBrowser = false});
 
-	cameraPositionX = -mapAsset.width / 2;
-	cameraPositionY = -mapAsset.height / 2;
+	cameraPositionX = -mapAsset.width / 2  + (window.innerWidth / 2);
+	cameraPositionY = -mapAsset.height / 2 + (window.innerHeight / 2);
 	// let cameraBoundsX = mapAsset.width / 2;
 	// let cameraBoundsY = mapAsset.height / 2;
 	cameraBoundsLeft = 0;
-	cameraBoundsRight = mapAsset.width;
+	cameraBoundsRight = mapAsset.width - window.innerWidth;
 	cameraBoundsTop = 0;
-	cameraBoundsBottom = mapAsset.width;
+	cameraBoundsBottom = mapAsset.height - window.innerHeight;
 
 	// // gets done only once: search for better function other than mouseOver
 	// // wholeCanvas.mouseOver(mouseInputActions);
@@ -469,65 +507,53 @@ function setup() {
 
 }
 
+let defaultScrollSpeed = 6;
+let defaultScrollerWidth = 0.15;
+
 function draw() {
 
 	background(212, 163, 115);
-	// housesBack.layerScale = map(mouseY, window.innerHeight, 0, 0.8, 1.2);
-	// housesBack.layerOnY = map(mouseY, (window.innerHeight * 2), 0, -(window.innerHeight * 0.4), (window.innerHeight / 10));
-	
-	// housesMiddle.layerScale = map(mouseY, window.innerHeight, 0, 0.8, 1.6);
-	// housesMiddle.layerOnY = map(mouseY, (window.innerHeight * 2), 0, -(window.innerHeight * 0.4), (window.innerHeight / 6));
-	
-	// housesFront.layerScale = map(mouseY, window.innerHeight, 0, 0.8, 1.9);
-	// housesFront.layerOnY = map(mouseY, (window.innerHeight * 2), 0, -(window.innerHeight * 0.2), (window.innerHeight / 2));
-	
-	// housesBack.drawLayerOfHouses();
-	// housesMiddle.drawLayerOfHouses();
-	// housesFront.drawLayerOfHouses();
-
 	map.draw();
 	
-	window1 = new Window({
-		sizeX: 50,
-		sizeY: 69,
-		positionX: 369,
-		positionY: 369,
-	});
-	// if (window1.isMouseOver) {
-	// 	// console.log(window1.sizeX);
-	// 	// console.log(window1.sizeY);
-	// 	// console.log(window1.positionX);
-	// 	// console.log(window1.positionY);
-	// 	fill(0, 153, 204);
-	// }
-	window1.draw();
-	
+	// window1 = new Window({
+	// 	sizeX: 50,
+	// 	sizeY: 69,
+	// 	positionX: 369,
+	// 	positionY: 369,
+	// });
+	// // if (window1.isMouseOver) {
+	// // 	// console.log(window1.sizeX);
+	// // 	// console.log(window1.sizeY);
+	// // 	// console.log(window1.positionX);
+	// // 	// console.log(window1.positionY);
+	// // 	fill(0, 153, 204);
+	// // }
+	// window1.draw();
 
 	leftScrollerUI = new ScrollerUI_X({
-		scrollSpeed: 5,
-		widthY: 0.2,
+		scrollSpeed: defaultScrollSpeed,
+		width: defaultScrollerWidth,
 		positionX: 0,
 		asset: gradientLeft
 	});
 	rightScrollerUI = new ScrollerUI_X({
-		scrollSpeed: 5,
-		widthY: 0.2,
-		positionX: window.innerWidth - (window.innerWidth * 0.2),
+		scrollSpeed: defaultScrollSpeed,
+		width: defaultScrollerWidth,
+		positionX: window.innerWidth - (window.innerWidth * defaultScrollerWidth),
 		asset: gradientRight
 	});
 	topScrollerUI = new ScrollerUI_Y({
-		scrollSpeed: 5,
-		widthX: 0.2,
+		scrollSpeed: defaultScrollSpeed,
+		width: defaultScrollerWidth,
 		positionY: 0,
 		asset: gradientTop
 	});
 	bottomScrollerUI = new ScrollerUI_Y({
-		scrollSpeed: 5,
-		widthX: 0.2,
-		positionY: window.innerHeight - (window.innerHeight * 0.2),
+		scrollSpeed: defaultScrollSpeed,
+		width: defaultScrollerWidth,
+		positionY: window.innerHeight - (window.innerHeight * defaultScrollerWidth),
 		asset: gradientBottom
 	});
-	// for each houseLayer.house.window => handleInteraction(x, y, w, h);
 	if (isMouseInsideBrowser) {
 		if (leftScrollerUI.isMouseOver()) {
 			leftScrollerUI.scrollLeft();
@@ -543,4 +569,5 @@ function draw() {
 		}
 	}
 	
+	cursor.display();
 }
