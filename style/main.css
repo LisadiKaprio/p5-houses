@@ -1,5 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap');
+
 html,
 body {
+  font-family: 'Open Sans', sans-serif;
   margin: 0;
   padding: 0;
   display: grid;
@@ -14,3 +17,14 @@ body {
   user-select: none;
 }
 
+.window-description {
+  font-size: 12px;
+  width: 240px;
+  height: auto;
+  padding: 12px;
+  background-color: #FEFAEC;
+  border: 3px solid #99A083;
+  color: #785D41;
+  border-radius: 0px 4px 4px 4px;
+  box-shadow: 3px 3px 5px #785e4175;
+}

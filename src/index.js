@@ -53,7 +53,7 @@ function windowResized() {
 	// }
 }
 
-let isMouseInsideBrowser;
+let isMouseOnCanvas;
 let cursorRadius = 15;
 class Cursor {
 	constructor() {
@@ -196,17 +196,6 @@ let rightScrollerUI;
 let topScrollerUI;
 let bottomScrollerUI;
 
-let divelem;
-// div construction: useful for ui later???
-		//
-		// divelem = createDiv("This is a div element");
-    	// divelem.position(this.positionX, this.positionY);
-    	// divelem.size(this.sizeX, this.sizeY);
-    	// divelem.style("border: 2px dashed");
-		// divelem.mouseOver(() => {console.log('hover')});
-
-// TODO: import Transformer https://github.com/ChristerNilsson/Transformer
-
 class Interactable {
 	constructor(config) {
 		// super();
@@ -218,10 +207,9 @@ class Interactable {
 		this.currentPositionY = this.positionY;
 		this.imageOnHover;
 		this.asset = config.asset || selection1Asset;
-		this.isHoveredOver;
+		this.isHoveredOver = false;
 	}
 	checkMouseOver() {
-		console.log(this.isHoveredOver);
 	  if (
 		mouseX > this.currentPositionX &&
 		mouseX < this.currentPositionX + this.sizeX && 
@@ -233,7 +221,6 @@ class Interactable {
 		this.isHoveredOver = false;
 	  }
 	}
-	// why do i have to assign the asset from the outside!?
 	draw() {
 		push();
 		this.checkMouseOver();
@@ -244,15 +231,11 @@ class Interactable {
 	}
 }
 
-function mouseClicked() {
-	console.log(map.window1.positionX);
-	console.log(map.window1.positionY);
-	console.log(map.window1.currentPositionX);
-	console.log(map.window1.currentPositionY);
-}
-
 class Window extends Interactable {
-
+	constructor(config) {
+		super(config);
+		this.story = config.story || 'Noone lives here. You can see empty rooms through the window.';
+	}
 }
 
 class Map {
@@ -267,21 +250,24 @@ class Map {
 					sizeY: selection1Asset.height,
 					positionX: 752,
 					positionY: 136,
-					asset: selection1Asset
+					asset: selection1Asset,
+					story: "<b>Who:</b> Biology Teacher, 32 <br><br><b>Currently:</b> Getting ready for the work day. <br><br><b>Mood:</b> He feels stressed after he had a heated argument with his daughter over the phone yesterday. He regrets some of the things he said, and wants to apologize to her later this evening."
 				}),
 			this.window2 = new Window({
 					sizeX: selection2Asset.width,
 					sizeY: selection2Asset.height,
 					positionX: 836,
 					positionY: 999,
-					asset: selection2Asset
+					asset: selection2Asset,
+					story: "<b>Who:</b> Engineer, 28 <br><br><b>Currently:</b> Cooking breakfast: noodles and fried sausages with tomato sauce. His vacation started this Monday. <br><br><b>Mood:</b> Calmer than usual. Lightly excited, as he remembers his plans for this evening - going to a dress shop to see his future wife try the new bride dress on."
 				}),
 			this.window3 = new Window({
 					sizeX: selection3Asset.width,
 					sizeY: selection3Asset.height,
 					positionX: 830,
 					positionY: 1097,
-					asset: selection3Asset
+					asset: selection3Asset,
+					story: "<b>Who:</b> Freelance Illustrator, 24 <br><br><b>Currently:</b> Sleeping after staying up working until 4am. <br><br><b>Mood:</b> Deep sleep."
 				}),
 		]
 	};
@@ -297,66 +283,33 @@ class Map {
 		pop();
 	}
 }
+
 let map = new Map({});
 
-// class House {
-// 	constructor(config) {
-// 		this.desiredScale = config.desiredScale || 0.5;
-// 		this.asset = config.asset || houseAsset2;
-// 		this.xOnLayer = config.xOnLayer?? 1; // position horizontally within layer of houses
-// 		this.layerY = config.layerY || 1; // position vertically 
-// 	}
-// 	drawHouse(layerScale, layerOnY) {
-// 		push();
-// 		// position
-// 		translate(
-// 			window.innerWidth * this.xOnLayer, 
-// 			window.innerHeight);
-// 		scale(this.desiredScale);
-// 		translate(
-// 			// origin in the middle horizontally of image
-// 			-(this.asset.width / 2), 
-// 			// origin at the very bottom of image
-// 			-(this.asset.height));
-// 		// render image
-// 		image(this.asset, 0, 0);
-// 		pop();
-// 	}
-// }
+let windowDescription;
+let scrollingEnabled = true;
 
-// class LayerOfHouses {
-// 	constructor(config) {
-// 		this.housesArray = config.housesArray || [];
-// 		this.currentLayer = config.currentLayer || 1;
-// 		this.layerOnY = config.layerOnY || 1;
-// 		this.layerScale = config.layerScale || 1;
-// 	}
-// 	drawLayerOfHouses() {
-// 		push();
-// 		// ensure the centered houses remain centered on screen
-// 		translate((window.innerWidth / 2), 0);
-// 		// apply scaling based on layer
-// 		scale(this.layerScale);
-// 		// move whole layer on X
-// 		translate(
-// 			map(cameraPositionX, -cameraBoundsX, cameraBoundsX, -cameraBoundsX, cameraBoundsX)
-// 			,0);
-// 		this.housesArray.forEach(house => {
-// 			house.drawHouse(this.layerScale, this.layerOnY);
-// 		});
-// 		pop();
-// 	}
-// }
-
-// let housesFront;
-// let housesMiddle;
-// let housesBack;
+function mouseClicked() {
+	if(windowDescription && isMouseOnCanvas){
+		windowDescription.remove();
+		scrollingEnabled = true;
+	}
+	map.windowArray.forEach(window => {
+		if(window.isHoveredOver){
+			windowDescription = createDiv(window.story);
+			windowDescription.position(mouseX, mouseY);
+			windowDescription.class("window-description");
+			scrollingEnabled = false;
+			windowDescription.mouseOver(() => {console.log('hover')});
+		}
+	})
+}
 
 function setup() {
 	wholeCanvas = createCanvas(window.innerWidth, window.innerHeight);
 	// check if mouse in inside
-	wholeCanvas.mouseOver(() => { isMouseInsideBrowser = true});
-	wholeCanvas.mouseOut(() => { isMouseInsideBrowser = false});
+	wholeCanvas.mouseOver(() => { isMouseOnCanvas = true});
+	wholeCanvas.mouseOut(() => { isMouseOnCanvas = false});
 
 	cameraPositionX = -mapAsset.width / 2  + (window.innerWidth / 2);
 	cameraPositionY = -mapAsset.height / 2 + (window.innerHeight / 2);
@@ -366,18 +319,6 @@ function setup() {
 	cameraBoundsRight = mapAsset.width - window.innerWidth;
 	cameraBoundsTop = 0;
 	cameraBoundsBottom = mapAsset.height - window.innerHeight;
-
-	// // gets done only once: search for better function other than mouseOver
-	// // wholeCanvas.mouseOver(mouseInputActions);
-	// housesFront = new LayerOfHouses({
-	// 	housesArray: [
-	// 		new House({
-	// 			desiredScale: 0.65,
-	// 			asset: houseAsset4,
-	// 			xOnLayer: -0.3,
-	// 		})
-	// });
-
 }
 
 let defaultScrollSpeed = 6;
@@ -389,43 +330,47 @@ function draw() {
 	map.setup();
 	map.draw();
 
-	leftScrollerUI = new ScrollerUI_X({
-		scrollSpeed: defaultScrollSpeed,
-		width: defaultScrollerWidth,
-		positionX: 0,
-		asset: gradientLeft
-	});
-	rightScrollerUI = new ScrollerUI_X({
-		scrollSpeed: defaultScrollSpeed,
-		width: defaultScrollerWidth,
-		positionX: window.innerWidth - (window.innerWidth * defaultScrollerWidth),
-		asset: gradientRight
-	});
-	topScrollerUI = new ScrollerUI_Y({
-		scrollSpeed: defaultScrollSpeed,
-		width: defaultScrollerWidth,
-		positionY: 0,
-		asset: gradientTop
-	});
-	bottomScrollerUI = new ScrollerUI_Y({
-		scrollSpeed: defaultScrollSpeed,
-		width: defaultScrollerWidth,
-		positionY: window.innerHeight - (window.innerHeight * defaultScrollerWidth),
-		asset: gradientBottom
-	});
-	if (isMouseInsideBrowser) {
-		if (leftScrollerUI.isMouseOver()) {
-			leftScrollerUI.scrollLeft();
+	// only active when no window description on screen
+	if(scrollingEnabled){
+		leftScrollerUI = new ScrollerUI_X({
+			scrollSpeed: defaultScrollSpeed,
+			width: defaultScrollerWidth,
+			positionX: 0,
+			asset: gradientLeft
+		});
+		rightScrollerUI = new ScrollerUI_X({
+			scrollSpeed: defaultScrollSpeed,
+			width: defaultScrollerWidth,
+			positionX: window.innerWidth - (window.innerWidth * defaultScrollerWidth),
+			asset: gradientRight
+		});
+		topScrollerUI = new ScrollerUI_Y({
+			scrollSpeed: defaultScrollSpeed,
+			width: defaultScrollerWidth,
+			positionY: 0,
+			asset: gradientTop
+		});
+		bottomScrollerUI = new ScrollerUI_Y({
+			scrollSpeed: defaultScrollSpeed,
+			width: defaultScrollerWidth,
+			positionY: window.innerHeight - (window.innerHeight * defaultScrollerWidth),
+			asset: gradientBottom
+		});
+		if (isMouseOnCanvas) {
+			if (leftScrollerUI.isMouseOver()) {
+				leftScrollerUI.scrollLeft();
+			}
+			if (rightScrollerUI.isMouseOver()) {
+				rightScrollerUI.scrollRight();
+			}
+			if (topScrollerUI.isMouseOver()) {
+				topScrollerUI.scrollTop();
+			}
+			if (bottomScrollerUI.isMouseOver()) {
+				bottomScrollerUI.scrollBottom();
+			}
 		}
-		if (rightScrollerUI.isMouseOver()) {
-			rightScrollerUI.scrollRight();
-		}
-		if (topScrollerUI.isMouseOver()) {
-			topScrollerUI.scrollTop();
-		}
-		if (bottomScrollerUI.isMouseOver()) {
-			bottomScrollerUI.scrollBottom();
-		}
+
 	}
 	
 	cursor.display();
