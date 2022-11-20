@@ -4,8 +4,13 @@ let houseAsset3;
 let houseAsset4;
 let houseAsset5;
 let gradientLeft;
+let gradientTop;
+let gradientBottom;
 let gradientRight;
 let mapAsset;
+let selection1Asset;
+let selection2Asset;
+let selection3Asset;
 
 // some value that makes sure the assets are displayed in reasonable size within the window
 let windowRatio = window.innerWidth / (window.innerWidth / 2);
@@ -21,6 +26,9 @@ function preload () {
 	gradientTop = loadImage('src/assets/gradient_top.png');
 	gradientBottom = loadImage('src/assets/gradient_bottom.png');
 	mapAsset = loadImage('src/assets/map-1.png');
+	selection1Asset = loadImage('src/assets/selection1.png');
+	selection2Asset = loadImage('src/assets/selection2.png');
+	selection3Asset = loadImage('src/assets/selection3.png');
 }
 
 let cameraPositionX // = mapAsset.width / 2;
@@ -199,148 +207,93 @@ let divelem;
 
 // TODO: import Transformer https://github.com/ChristerNilsson/Transformer
 
-class Transformer {
-	constructor(x2 = 0, y2 = 0, a1 = 0, s = 1, stack = []) {
-	  this.x = x2;
-	  this.y = y2;
-	  this.a = a1;
-	  this.s = s;
-	  this.stack = stack;
-	  this.commands = [];
-	}
-  
-	push() {
-	  push();
-	  return this.stack.push([this.x, this.y, this.a, this.s]);
-	}
-  
-	pop() {
-	  pop();
-	  return [this.x, this.y, this.a, this.s] = this.stack.pop();
-	}
-  
-	rotate(da) {
-	  this.commands.push(`r ${da}`);
-	  rotate(da);
-	  return this.a += da;
-	}
-  
-	scale(ds) {
-	  this.commands.push(`s ${ds}`);
-	  scale(ds);
-	  return this.s *= ds;
-	}
-  
-	translate(dx, dy) {
-	  this.commands.push(`t ${dx} ${dy}`);
-	  translate(dx, dy);
-	  this.x += this.s * dx * cos(this.a) - this.s * dy * sin(this.a);
-	  return this.y += this.s * dy * cos(this.a) + this.s * dx * sin(this.a);
-	}
-  
-	getCommands() {
-	  return _.clone(this.commands);
-	}
-  
-	backwards(x, y, commands) {
-	  var a, arr, command, dx, dy, k, len, ref, x1, y1;
-	  ref = commands.reverse();
-	  for (k = 0, len = ref.length; k < len; k++) {
-		command = ref[k];
-		arr = command.split(' ');
-		if (arr[0] === 'r') {
-		  a = -arr[1];
-		  x1 = x * cos(a) - y * sin(a);
-		  y1 = y * cos(a) + x * sin(a);
-		  [x, y] = [x1, y1];
-		}
-		if (command[0] === 's') {
-		  x = x / arr[1];
-		  y = y / arr[1];
-		}
-		if (command[0] === 't') {
-		  dx = arr[1];
-		  dy = arr[2];
-		  x -= dx;
-		  y -= dy;
-		}
-	  }
-	  return [x, y];
-	}
-  
-	dump() {
-	  return console.log(this.x, this.y, this.a, this.s);
-	}
-  
-  };
-
-let tf = new Transformer();
-
 class Interactable {
 	constructor(config) {
 		// super();
-
 		this.sizeX = config.sizeX || 0;
 		this.sizeY = config.sizeY || 0;
 		this.positionX = config.positionX || 0;
 		this.positionY = config.positionY || 0;
-		// current x y w h
-		this.asset;
-
+		this.currentPositionX = this.positionX;
+		this.currentPositionY = this.positionY;
+		this.imageOnHover;
+		this.asset = config.asset || selection1Asset;
 		this.isHoveredOver;
 	}
-	isMouseOver() {
+	checkMouseOver() {
+		console.log(this.isHoveredOver);
 	  if (
-		mouseX > this.positionX &&
-		mouseX < this.positionX + this.sizeX && 
-		mouseY > this.positionY &&
-		mouseY < this.positionY + this.sizeY 
+		mouseX > this.currentPositionX &&
+		mouseX < this.currentPositionX + this.sizeX && 
+		mouseY > this.currentPositionY &&
+		mouseY < this.currentPositionY + this.sizeY 
 	  ) {
-		return true;
+		this.isHoveredOver = true;
 	  } else {
-		return false;
+		this.isHoveredOver = false;
 	  }
 	}
-	isMouseOverTF() {
-	  if (
-		mouseX > tf.x &&
-		mouseX < tf.x + this.sizeX * tf.s && 
-		mouseY > tf.y &&
-		mouseY < tf.y + this.sizeY * tf.s 
-	  ) {
-		return true;
-	  } else {
-		return false;
-	  }
-	}
+	// why do i have to assign the asset from the outside!?
 	draw() {
-		tf.push();
-		if(this.isMouseOverTF()){
-			fill('rgba(100%,0%,100%,0.5)');
-		} else {
-			fill(255, 255, 255);
+		push();
+		this.checkMouseOver();
+		if(this.isHoveredOver){
+			this.imageOnHover = image(this.asset, this.positionX, this.positionY);
 		}
-		tf.translate(mouseX * 0.5, mouseY * 0.5);
-		this.asset = rect(this.positionX, this.positionY, this.sizeX, this.sizeY);
-		tf.pop();
+		pop();
 	}
+}
+
+function mouseClicked() {
+	console.log(map.window1.positionX);
+	console.log(map.window1.positionY);
+	console.log(map.window1.currentPositionX);
+	console.log(map.window1.currentPositionY);
 }
 
 class Window extends Interactable {
 
 }
 
-let window1;
-
 class Map {
 	constructor(config) {
 		this.x = config.x || 0; 
-		this.y = config.x || 0; 
+		this.y = config.x || 0;
 	}
+	setup() {
+		this.windowArray = [
+			this.window1 = new Window({
+					sizeX: selection1Asset.width,
+					sizeY: selection1Asset.height,
+					positionX: 752,
+					positionY: 136,
+					asset: selection1Asset
+				}),
+			this.window2 = new Window({
+					sizeX: selection2Asset.width,
+					sizeY: selection2Asset.height,
+					positionX: 836,
+					positionY: 999,
+					asset: selection2Asset
+				}),
+			this.window3 = new Window({
+					sizeX: selection3Asset.width,
+					sizeY: selection3Asset.height,
+					positionX: 830,
+					positionY: 1097,
+					asset: selection3Asset
+				}),
+		]
+	};
 	draw() {
 		push();
 		translate(cameraPositionX, cameraPositionY);
 		image(mapAsset, this.x, this.y);
+		this.windowArray.forEach(window => {
+			window.currentPositionX = window.positionX + cameraPositionX;
+			window.currentPositionY = window.positionY + cameraPositionY;
+			window.draw();
+		})
 		pop();
 	}
 }
@@ -422,87 +375,7 @@ function setup() {
 	// 			desiredScale: 0.65,
 	// 			asset: houseAsset4,
 	// 			xOnLayer: -0.3,
-	// 		}),
-	// 		new House({
-	// 			desiredScale: 0.6,
-	// 			asset: houseAsset3,
-	// 			xOnLayer: 0,
-	// 		}),
-	// 		new House({
-	// 			desiredScale: 0.45,
-	// 			asset: houseAsset5,
-	// 			xOnLayer: 0.3,
-	// 		}),
-	// 		new House({
-	// 			desiredScale: 0.3,
-	// 			asset: houseAsset2,
-	// 			xOnLayer: 0.5,
-	// 		}),
-	// 		new House({
-	// 			desiredScale: 0.3,
-	// 			asset: houseAsset2,
-	// 			xOnLayer: -0.5,
-	// 		}),
-	// 	],
-	// });
-	// housesMiddle = new LayerOfHouses({
-	// 	housesArray: [
-	// 		new House({
-	// 			desiredScale: 0.3,
-	// 			asset: houseAsset4,
-	// 			xOnLayer: -0.3,
-	// 		}),
-	// 		new House({
-	// 			desiredScale: 0.4,
-	// 			asset: houseAsset2,
-	// 			xOnLayer: -0.2,
-	// 		}),
-	// 		new House({
-	// 			desiredScale: 0.3,
-	// 			asset: houseAsset5,
-	// 			xOnLayer: -0.1,
-	// 		}),
-	// 		new House({
-	// 			desiredScale: 0.6,
-	// 			asset: houseAsset3,
-	// 			xOnLayer: 0.1,
-	// 		}),
-	// 		new House({
-	// 			desiredScale: 0.3,
-	// 			asset: houseAsset4,
-	// 			xOnLayer: 0.3,
-	// 		}),
-
-	// 	]
-	// });
-	// housesBack = new LayerOfHouses({
-	// 	housesArray: [
-	// 		new House({
-	// 			desiredScale: 0.65,
-	// 			asset: houseAsset4,
-	// 			xOnLayer: -0.3,
-	// 		}),
-	// 		new House({
-	// 			desiredScale: 0.6,
-	// 			asset: houseAsset3,
-	// 			xOnLayer: 0,
-	// 		}),
-	// 		new House({
-	// 			desiredScale: 0.45,
-	// 			asset: houseAsset5,
-	// 			xOnLayer: 0.3,
-	// 		}),
-	// 		new House({
-	// 			desiredScale: 0.3,
-	// 			asset: houseAsset2,
-	// 			xOnLayer: 0.5,
-	// 		}),
-	// 		new House({
-	// 			desiredScale: 0.3,
-	// 			asset: houseAsset2,
-	// 			xOnLayer: -0.5,
-	// 		}),
-	// 	],
+	// 		})
 	// });
 
 }
@@ -513,22 +386,8 @@ let defaultScrollerWidth = 0.15;
 function draw() {
 
 	background(212, 163, 115);
+	map.setup();
 	map.draw();
-	
-	// window1 = new Window({
-	// 	sizeX: 50,
-	// 	sizeY: 69,
-	// 	positionX: 369,
-	// 	positionY: 369,
-	// });
-	// // if (window1.isMouseOver) {
-	// // 	// console.log(window1.sizeX);
-	// // 	// console.log(window1.sizeY);
-	// // 	// console.log(window1.positionX);
-	// // 	// console.log(window1.positionY);
-	// // 	fill(0, 153, 204);
-	// // }
-	// window1.draw();
 
 	leftScrollerUI = new ScrollerUI_X({
 		scrollSpeed: defaultScrollSpeed,
