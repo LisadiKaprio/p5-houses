@@ -1,4 +1,20 @@
 
+// TODO: story progression
+
+// let numberOfWindowsSeen
+// => player checks windows one by one, the number increases
+// => after each window, there's a subtle front gradient on the sides (animated?) layer
+// and it keeps expanding
+// if numberOfWindowsSeen === windows.length {
+//   create button saying 'what could possibly happen now?'	
+// } 
+// clicking the button triggers a white flash
+// camera automatically pans to the house where the rocket hit
+// changes:
+//   content of windows
+//   sprites of assets, sprite of map
+
+
 let houseAsset2;
 let houseAsset3;
 let houseAsset4;
@@ -14,7 +30,6 @@ let selection3Asset;
 
 // some value that makes sure the assets are displayed in reasonable size within the window
 let windowRatio = window.innerWidth / (window.innerWidth / 2);
-
 
 function preload () {
 	houseAsset2 = loadImage('src/assets/2.png');
