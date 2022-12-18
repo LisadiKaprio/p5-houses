@@ -93,123 +93,6 @@ class Cursor {
 
 let cursor = new Cursor();
 
-class ScrollerUI_X {
-	constructor(config) {
-		// how fast the camera will move
-		this.scrollSpeed = config.scrollSpeed || 1;
-		// how much of the screen on each side recognizes the cursor hovering over it
-		// and tells the camera to move
-		// a number between 0 and 1
-		this.width = config.width || 0.2;
-		this.positionX = config.positionX || 0;
-		this.asset = config.asset || gradientLeft;
-		this.trigger;
-	}
-	isMouseOver() {
-	  if (
-		mouseX > this.positionX &&
-		mouseX < this.positionX + (window.innerWidth * this.width) &&
-		mouseY > 0 &&
-		mouseY < 0 + window.innerHeight
-	  ) {
-		return true;
-	  } else {
-		return false;
-	  }
-	}
-	scrollLeft() {
-		this.trigger = image(
-			this.asset,
-			this.positionX,
-			0,
-			(window.innerWidth * this.width),
-			window.innerHeight
-			);
-		this.asset.resize(
-			(window.innerWidth * this.width),
-			window.innerHeight);
-		if (cameraPositionX <= cameraBoundsLeft){
-			cameraPositionX += this.scrollSpeed;
-		}
-	}
-	scrollRight() {
-		this.trigger = image(
-			this.asset,
-			this.positionX,
-			0,
-			(window.innerWidth * this.width),
-			window.innerHeight
-			);
-		this.asset.resize(
-				(window.innerWidth * this.width),
-				window.innerHeight);
-		if (cameraPositionX >= -cameraBoundsRight){
-			cameraPositionX -= this.scrollSpeed;
-		}
-	}
-}
-
-class ScrollerUI_Y {
-	constructor(config) {
-		// how fast the camera will move
-		this.scrollSpeed = config.scrollSpeed || 1;
-		// how much of the screen on each side recognizes the cursor hovering over it
-		// and tells the camera to move
-		// a number between 0 and 1
-		this.width = config.width || 0.2;
-		this.positionY = config.positionY || 0;
-		this.asset = config.asset || gradientTop;
-		this.trigger;
-	}
-	isMouseOver() {
-	  if (
-		mouseX > 0 &&
-		mouseX < 0 + window.innerWidth &&
-		mouseY > this.positionY &&
-		mouseY < this.positionY + (window.innerHeight* this.width)
-	  ) {
-		return true;
-	  } else {
-		return false;
-	  }
-	}
-	scrollTop() {
-		this.trigger = image(
-			this.asset,
-			0,
-			this.positionY,
-			window.innerWidth,
-			(window.innerHeight * this.width),
-			);
-		this.asset.resize(
-			window.innerWidth,
-			(window.innerHeight * this.width));
-		if (cameraPositionY <= cameraBoundsTop){
-			cameraPositionY += this.scrollSpeed;
-		}
-	}
-	scrollBottom() {
-		this.trigger = image(
-			this.asset,
-			0,
-			this.positionY,
-			window.innerWidth,
-			(window.innerHeight * this.width),
-			);
-		this.asset.resize(
-			window.innerWidth,
-			(window.innerHeight * this.width));
-		if (cameraPositionY >= -cameraBoundsBottom){
-			cameraPositionY -= this.scrollSpeed;
-		}
-	}
-}
-
-let leftScrollerUI;
-let rightScrollerUI;
-let topScrollerUI;
-let bottomScrollerUI;
-
 class Interactable {
 	constructor(config) {
 		// super();
@@ -303,6 +186,11 @@ let map = new Map({});
 let windowDescription;
 let scrollingEnabled = true;
 
+function setHorizontalCameraBounds() {
+	cameraBoundsRight = mapAsset.width - window.innerWidth;
+	cameraBoundsBottom = mapAsset.height - window.innerHeight;
+}
+
 function mouseClicked() {
 	if(windowDescription && isMouseOnCanvas){
 		windowDescription.remove();
@@ -319,55 +207,20 @@ function mouseClicked() {
 	})
 }
 
-function setup() {
-	wholeCanvas = createCanvas(window.innerWidth, window.innerHeight);
-	// check if mouse in inside
-	wholeCanvas.mouseOver(() => { isMouseOnCanvas = true});
-	wholeCanvas.mouseOut(() => { isMouseOnCanvas = false});
-
-	cameraPositionX = mapAsset.width / 2  - (window.innerWidth / 2);
-	cameraPositionY = mapAsset.height / 2 - (window.innerHeight / 2);
-	// let cameraBoundsX = mapAsset.width / 2;
-	// let cameraBoundsY = mapAsset.height / 2;
-	cameraBoundsLeft = 0;
-	cameraBoundsTop = 0;
-	setHorizontalCameraBounds();
-}
-
-function setHorizontalCameraBounds() {
-	cameraBoundsRight = mapAsset.width - window.innerWidth;
-	cameraBoundsBottom = mapAsset.height - window.innerHeight;
-}
-
-let defaultScrollSpeed = 6;
-let defaultScrollerWidth = 0.15;
-
-let scrollVelocity = 1;
-let scrollDrag = 1;
+let scrollVelocity = 1.2;
+let scrollDrag = 4;
 
 let targetCameraPositionX = 0;
 let targetCameraPositionY = 0;
+let difX = 0;
+let difY = 0;
 
 function mouseDragged() {
-	targetCameraPositionX += movedX * scrollVelocity;
-	targetCameraPositionY += movedY * scrollVelocity;
+	targetCameraPositionX -= movedX * scrollVelocity;
+	targetCameraPositionY -= movedY * scrollVelocity;
 
-	let deltaX = targetCameraPositionX + cameraPositionX;
-	let deltaY = targetCameraPositionY + cameraPositionY;
-
-	cameraPositionX += deltaX / scrollDrag;
-	cameraPositionY += deltaY / scrollDrag;
-
-	// if (cameraPositionX === targetCameraPositionX) {
-	// 	targetCameraPositionX =
-	// }
-
-	console.log('WAS: target camera positions: ' + targetCameraPositionX + ', ' + targetCameraPositionY + ', camera positions: ' + cameraPositionX + ', ' + cameraPositionY);
-	cameraPositionX = stayInBoundsX(cameraPositionX);
-	cameraPositionY = stayInBoundsY(cameraPositionY);
 	targetCameraPositionX = stayInBoundsX(targetCameraPositionX);
 	targetCameraPositionY = stayInBoundsY(targetCameraPositionY);
-	console.log('IS: target camera positions: ' + targetCameraPositionX + ', ' + targetCameraPositionY + ', camera positions: ' + cameraPositionX + ', ' + cameraPositionY);
 
 	// prevent default
 	return false;
@@ -393,54 +246,40 @@ function stayInBoundsY(inputValueY) {
 	return inputValueY;
 }
 
+function setup() {
+	wholeCanvas = createCanvas(window.innerWidth, window.innerHeight);
+	// check if mouse in inside
+	wholeCanvas.mouseOver(() => { isMouseOnCanvas = true});
+	wholeCanvas.mouseOut(() => { isMouseOnCanvas = false});
+
+	cameraPositionX = mapAsset.width / 2  - (window.innerWidth / 2);
+	cameraPositionY = mapAsset.height / 2 - (window.innerHeight / 2);
+
+	targetCameraPositionX = cameraPositionX;
+	targetCameraPositionY = cameraPositionY;
+	// let cameraBoundsX = mapAsset.width / 2;
+	// let cameraBoundsY = mapAsset.height / 2;
+	cameraBoundsLeft = 0;
+	cameraBoundsTop = 0;
+	setHorizontalCameraBounds();
+}
+
 function draw() {
 
 	background(212, 163, 115);
+
 	map.setup();
+
+	// smooth drag and pan
+	difX = targetCameraPositionX - cameraPositionX;
+	difY = targetCameraPositionY - cameraPositionY;
+	cameraPositionX += difX / scrollDrag;
+	cameraPositionY += difY / scrollDrag;
+	cameraPositionX = stayInBoundsX(cameraPositionX);
+	cameraPositionY = stayInBoundsY(cameraPositionY);
+	//
+
 	map.draw();
 
-	// only active when no window description on screen
-	// if(scrollingEnabled){
-	// 	leftScrollerUI = new ScrollerUI_X({
-	// 		scrollSpeed: defaultScrollSpeed,
-	// 		width: defaultScrollerWidth,
-	// 		positionX: 0,
-	// 		asset: gradientLeft
-	// 	});
-	// 	rightScrollerUI = new ScrollerUI_X({
-	// 		scrollSpeed: defaultScrollSpeed,
-	// 		width: defaultScrollerWidth,
-	// 		positionX: window.innerWidth - (window.innerWidth * defaultScrollerWidth),
-	// 		asset: gradientRight
-	// 	});
-	// 	topScrollerUI = new ScrollerUI_Y({
-	// 		scrollSpeed: defaultScrollSpeed,
-	// 		width: defaultScrollerWidth,
-	// 		positionY: 0,
-	// 		asset: gradientTop
-	// 	});
-	// 	bottomScrollerUI = new ScrollerUI_Y({
-	// 		scrollSpeed: defaultScrollSpeed,
-	// 		width: defaultScrollerWidth,
-	// 		positionY: window.innerHeight - (window.innerHeight * defaultScrollerWidth),
-	// 		asset: gradientBottom
-	// 	});
-	// 	if (isMouseOnCanvas) {
-	// 		if (leftScrollerUI.isMouseOver()) {
-	// 			leftScrollerUI.scrollLeft();
-	// 		}
-	// 		if (rightScrollerUI.isMouseOver()) {
-	// 			rightScrollerUI.scrollRight();
-	// 		}
-	// 		if (topScrollerUI.isMouseOver()) {
-	// 			topScrollerUI.scrollTop();
-	// 		}
-	// 		if (bottomScrollerUI.isMouseOver()) {
-	// 			bottomScrollerUI.scrollBottom();
-	// 		}
-	// 	}
-
-	// }
-	
 	cursor.display();
 }
