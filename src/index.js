@@ -58,8 +58,7 @@ let cameraBoundsBottom // = mapAsset.width;
 // to make it responsive
 function windowResized() {
 	resizeCanvas(window.innerWidth, window.innerHeight);
-	cameraBoundsRight = mapAsset.width - window.innerWidth;
-	cameraBoundsBottom = mapAsset.height - window.innerHeight;
+	setHorizontalCameraBounds();
 	// if on smaller screen and portrait, don't use bg image 
 	// if (window.innerHeight > window.innerWidth*1.3 && window.innerWidth < 1000) {
 	//   background(10);
@@ -288,11 +287,11 @@ class Map {
 	};
 	draw() {
 		push();
-		translate(cameraPositionX, cameraPositionY);
+		translate(-cameraPositionX, -cameraPositionY);
 		image(mapAsset, this.x, this.y);
 		this.windowArray.forEach(window => {
-			window.currentPositionX = window.positionX + cameraPositionX;
-			window.currentPositionY = window.positionY + cameraPositionY;
+			window.currentPositionX = window.positionX - cameraPositionX;
+			window.currentPositionY = window.positionY - cameraPositionY;
 			window.draw();
 		})
 		pop();
@@ -326,18 +325,73 @@ function setup() {
 	wholeCanvas.mouseOver(() => { isMouseOnCanvas = true});
 	wholeCanvas.mouseOut(() => { isMouseOnCanvas = false});
 
-	cameraPositionX = -mapAsset.width / 2  + (window.innerWidth / 2);
-	cameraPositionY = -mapAsset.height / 2 + (window.innerHeight / 2);
+	cameraPositionX = mapAsset.width / 2  - (window.innerWidth / 2);
+	cameraPositionY = mapAsset.height / 2 - (window.innerHeight / 2);
 	// let cameraBoundsX = mapAsset.width / 2;
 	// let cameraBoundsY = mapAsset.height / 2;
 	cameraBoundsLeft = 0;
-	cameraBoundsRight = mapAsset.width - window.innerWidth;
 	cameraBoundsTop = 0;
+	setHorizontalCameraBounds();
+}
+
+function setHorizontalCameraBounds() {
+	cameraBoundsRight = mapAsset.width - window.innerWidth;
 	cameraBoundsBottom = mapAsset.height - window.innerHeight;
 }
 
 let defaultScrollSpeed = 6;
 let defaultScrollerWidth = 0.15;
+
+let scrollVelocity = 1;
+let scrollDrag = 1;
+
+let targetCameraPositionX = 0;
+let targetCameraPositionY = 0;
+
+function mouseDragged() {
+	targetCameraPositionX += movedX * scrollVelocity;
+	targetCameraPositionY += movedY * scrollVelocity;
+
+	let deltaX = targetCameraPositionX + cameraPositionX;
+	let deltaY = targetCameraPositionY + cameraPositionY;
+
+	cameraPositionX += deltaX / scrollDrag;
+	cameraPositionY += deltaY / scrollDrag;
+
+	// if (cameraPositionX === targetCameraPositionX) {
+	// 	targetCameraPositionX =
+	// }
+
+	console.log('WAS: target camera positions: ' + targetCameraPositionX + ', ' + targetCameraPositionY + ', camera positions: ' + cameraPositionX + ', ' + cameraPositionY);
+	cameraPositionX = stayInBoundsX(cameraPositionX);
+	cameraPositionY = stayInBoundsY(cameraPositionY);
+	targetCameraPositionX = stayInBoundsX(targetCameraPositionX);
+	targetCameraPositionY = stayInBoundsY(targetCameraPositionY);
+	console.log('IS: target camera positions: ' + targetCameraPositionX + ', ' + targetCameraPositionY + ', camera positions: ' + cameraPositionX + ', ' + cameraPositionY);
+
+	// prevent default
+	return false;
+}
+
+function stayInBoundsX(inputValueX) {
+	if (inputValueX <= cameraBoundsLeft) {
+		return cameraBoundsLeft;
+	} 
+	if (inputValueX >= cameraBoundsRight) {
+		return cameraBoundsRight;
+	}
+	return inputValueX;
+}
+
+function stayInBoundsY(inputValueY) {
+	if (inputValueY <= cameraBoundsTop) {
+		return cameraBoundsTop;
+	} 
+	if (inputValueY >= cameraBoundsBottom) {
+		return cameraBoundsBottom;
+	}
+	return inputValueY;
+}
 
 function draw() {
 
@@ -346,47 +400,47 @@ function draw() {
 	map.draw();
 
 	// only active when no window description on screen
-	if(scrollingEnabled){
-		leftScrollerUI = new ScrollerUI_X({
-			scrollSpeed: defaultScrollSpeed,
-			width: defaultScrollerWidth,
-			positionX: 0,
-			asset: gradientLeft
-		});
-		rightScrollerUI = new ScrollerUI_X({
-			scrollSpeed: defaultScrollSpeed,
-			width: defaultScrollerWidth,
-			positionX: window.innerWidth - (window.innerWidth * defaultScrollerWidth),
-			asset: gradientRight
-		});
-		topScrollerUI = new ScrollerUI_Y({
-			scrollSpeed: defaultScrollSpeed,
-			width: defaultScrollerWidth,
-			positionY: 0,
-			asset: gradientTop
-		});
-		bottomScrollerUI = new ScrollerUI_Y({
-			scrollSpeed: defaultScrollSpeed,
-			width: defaultScrollerWidth,
-			positionY: window.innerHeight - (window.innerHeight * defaultScrollerWidth),
-			asset: gradientBottom
-		});
-		if (isMouseOnCanvas) {
-			if (leftScrollerUI.isMouseOver()) {
-				leftScrollerUI.scrollLeft();
-			}
-			if (rightScrollerUI.isMouseOver()) {
-				rightScrollerUI.scrollRight();
-			}
-			if (topScrollerUI.isMouseOver()) {
-				topScrollerUI.scrollTop();
-			}
-			if (bottomScrollerUI.isMouseOver()) {
-				bottomScrollerUI.scrollBottom();
-			}
-		}
+	// if(scrollingEnabled){
+	// 	leftScrollerUI = new ScrollerUI_X({
+	// 		scrollSpeed: defaultScrollSpeed,
+	// 		width: defaultScrollerWidth,
+	// 		positionX: 0,
+	// 		asset: gradientLeft
+	// 	});
+	// 	rightScrollerUI = new ScrollerUI_X({
+	// 		scrollSpeed: defaultScrollSpeed,
+	// 		width: defaultScrollerWidth,
+	// 		positionX: window.innerWidth - (window.innerWidth * defaultScrollerWidth),
+	// 		asset: gradientRight
+	// 	});
+	// 	topScrollerUI = new ScrollerUI_Y({
+	// 		scrollSpeed: defaultScrollSpeed,
+	// 		width: defaultScrollerWidth,
+	// 		positionY: 0,
+	// 		asset: gradientTop
+	// 	});
+	// 	bottomScrollerUI = new ScrollerUI_Y({
+	// 		scrollSpeed: defaultScrollSpeed,
+	// 		width: defaultScrollerWidth,
+	// 		positionY: window.innerHeight - (window.innerHeight * defaultScrollerWidth),
+	// 		asset: gradientBottom
+	// 	});
+	// 	if (isMouseOnCanvas) {
+	// 		if (leftScrollerUI.isMouseOver()) {
+	// 			leftScrollerUI.scrollLeft();
+	// 		}
+	// 		if (rightScrollerUI.isMouseOver()) {
+	// 			rightScrollerUI.scrollRight();
+	// 		}
+	// 		if (topScrollerUI.isMouseOver()) {
+	// 			topScrollerUI.scrollTop();
+	// 		}
+	// 		if (bottomScrollerUI.isMouseOver()) {
+	// 			bottomScrollerUI.scrollBottom();
+	// 		}
+	// 	}
 
-	}
+	// }
 	
 	cursor.display();
 }
