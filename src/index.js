@@ -19,10 +19,6 @@ let houseAsset2;
 let houseAsset3;
 let houseAsset4;
 let houseAsset5;
-let gradientLeft;
-let gradientTop;
-let gradientBottom;
-let gradientRight;
 let mapAsset;
 let selection1Asset;
 let selection2Asset;
@@ -36,10 +32,6 @@ function preload () {
 	houseAsset3 = loadImage('src/assets/3.png');
 	houseAsset4 = loadImage('src/assets/4.png');
 	houseAsset5 = loadImage('src/assets/5.png');
-	gradientLeft = loadImage('src/assets/gradient_left.png');
-	gradientRight = loadImage('src/assets/gradient_right.png');
-	gradientTop = loadImage('src/assets/gradient_top.png');
-	gradientBottom = loadImage('src/assets/gradient_bottom.png');
 	mapAsset = loadImage('src/assets/map-1.png');
 	selection1Asset = loadImage('src/assets/selection1.png');
 	selection2Asset = loadImage('src/assets/selection2.png');
@@ -81,9 +73,9 @@ class Cursor {
 	display() {
 		noCursor();
 		noStroke();
-		fill(115, 120, 98, 50);
+		fill(9, 8, 7, 50);
 		circle(mouseX+ (mouseX*0.03), mouseY+ (mouseY*0.03), cursorRadius+10)
-		fill(115, 120, 98);
+		fill(9, 8, 7);
 		circle(mouseX, mouseY, cursorRadius+10);
 		if (this.currentImage) {
 			image(this.currentImage, mouseX, mouseY, cursorRadius+5, cursorRadius+5);
@@ -266,7 +258,7 @@ function setup() {
 
 function draw() {
 
-	background(212, 163, 115);
+	background(9, 8, 7);
 
 	map.setup();
 
