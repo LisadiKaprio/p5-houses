@@ -20,6 +20,9 @@ let houseAsset3;
 let houseAsset4;
 let houseAsset5;
 let mapAsset;
+let w1IdleAsset;
+let w1HoverAsset;
+let w1SeenAsset;
 let selection1Asset;
 let selection2Asset;
 let selection3Asset;
@@ -32,7 +35,10 @@ function preload () {
 	houseAsset3 = loadImage('src/assets/3.png');
 	houseAsset4 = loadImage('src/assets/4.png');
 	houseAsset5 = loadImage('src/assets/5.png');
-	mapAsset = loadImage('src/assets/map-1.png');
+	mapAsset = loadImage('src/assets/map-1.jpg');
+	w1IdleAsset = loadImage('src/assets/w1-idle.jpg');
+	w1HoverAsset = loadImage('src/assets/w1-hover.jpg');
+	w1SeenAsset = loadImage('src/assets/w1-seen.jpg');
 	selection1Asset = loadImage('src/assets/selection1.png');
 	selection2Asset = loadImage('src/assets/selection2.png');
 	selection3Asset = loadImage('src/assets/selection3.png');
@@ -94,9 +100,11 @@ class Interactable {
 		this.positionY = config.positionY || 0;
 		this.currentPositionX = this.positionX;
 		this.currentPositionY = this.positionY;
-		this.imageOnHover;
+		this.renderedImage;
 		this.asset = config.asset || selection1Asset;
+		this.assetSeen = config.assetSeen || selection1Asset;
 		this.isHoveredOver = false;
+		this.isSeen = false;
 	}
 	checkMouseOver() {
 	  if (
@@ -113,8 +121,11 @@ class Interactable {
 	draw() {
 		push();
 		this.checkMouseOver();
-		if(this.isHoveredOver){
-			this.imageOnHover = image(this.asset, this.positionX, this.positionY);
+		if (this.isSeen === true) {
+			console.log('render seen window');
+			this.renderedImage = image(this.assetSeen, this.positionX, this.positionY);
+		} else if (this.isHoveredOver && this.isSeen === false) {
+			this.renderedImage = image(this.asset, this.positionX, this.positionY);
 		}
 		pop();
 	}
@@ -135,11 +146,12 @@ class Map {
 	setup() {
 		this.windowArray = [
 			this.window1 = new Window({
-					sizeX: selection1Asset.width,
-					sizeY: selection1Asset.height,
-					positionX: 752,
-					positionY: 136,
-					asset: selection1Asset,
+					sizeX: w1HoverAsset.width,
+					sizeY: w1HoverAsset.height,
+					positionX: 558,
+					positionY: 477,
+					asset: w1HoverAsset,
+					assetSeen: w1SeenAsset,
 					story: "<b>Who:</b> Biology Teacher, 32 <br><br><b>Currently:</b> Getting ready for the work day. <br><br><b>Mood:</b> He feels stressed after he had a heated argument with his daughter over the phone yesterday. He regrets some of the things he said, and wants to apologize to her later this evening."
 				}),
 			this.window2 = new Window({
@@ -148,6 +160,7 @@ class Map {
 					positionX: 836,
 					positionY: 999,
 					asset: selection2Asset,
+					assetSeen: selection2Asset,
 					story: "<b>Who:</b> Engineer, 28 <br><br><b>Currently:</b> Cooking breakfast: noodles and fried sausages with tomato sauce. His vacation started this Monday. <br><br><b>Mood:</b> Calmer than usual. Lightly excited, as he remembers his plans for this evening - going to a dress shop to see his future wife try the new bride dress on."
 				}),
 			this.window3 = new Window({
@@ -156,6 +169,7 @@ class Map {
 					positionX: 830,
 					positionY: 1097,
 					asset: selection3Asset,
+					assetSeen: selection3Asset,
 					story: "<b>Who:</b> Freelance Illustrator, 24 <br><br><b>Currently:</b> Sleeping after staying up working until 4am. <br><br><b>Mood:</b> Deep sleep."
 				}),
 		]
@@ -195,6 +209,7 @@ function mouseClicked() {
 			windowDescription.class("window-description");
 			scrollingEnabled = false;
 			windowDescription.mouseOver(() => {console.log('hover')});
+			window.isSeen = true;
 		}
 	})
 }
@@ -208,11 +223,13 @@ let difX = 0;
 let difY = 0;
 
 function mouseDragged() {
-	targetCameraPositionX -= movedX * scrollVelocity;
-	targetCameraPositionY -= movedY * scrollVelocity;
+	if (scrollingEnabled) {
+		targetCameraPositionX -= movedX * scrollVelocity;
+		targetCameraPositionY -= movedY * scrollVelocity;
 
-	targetCameraPositionX = stayInBoundsX(targetCameraPositionX);
-	targetCameraPositionY = stayInBoundsY(targetCameraPositionY);
+		targetCameraPositionX = stayInBoundsX(targetCameraPositionX);
+		targetCameraPositionY = stayInBoundsY(targetCameraPositionY);
+	}
 
 	// prevent default
 	return false;
