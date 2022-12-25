@@ -38,9 +38,6 @@ let selection1Asset;
 let selection2Asset;
 let selection3Asset;
 
-// some value that makes sure the assets are displayed in reasonable size within the window
-let windowRatio = window.innerWidth / (window.innerWidth / 2);
-
 function preload () {
 	houseAsset2 = loadImage('src/assets/2.png');
 	houseAsset3 = loadImage('src/assets/3.png');
@@ -66,6 +63,9 @@ function preload () {
 	selection3Asset = loadImage('src/assets/selection3.png');
 }
 
+// some value that makes sure the assets are displayed in reasonable size within the window
+let windowRatio = window.innerWidth / (window.innerWidth / 2);
+
 let cameraPositionX // = mapAsset.width / 2;
 let cameraPositionY // = mapAsset.height / 2;
 // let cameraBoundsX = mapAsset.width / 2;
@@ -74,6 +74,23 @@ let cameraBoundsLeft = 0;
 let cameraBoundsRight // = mapAsset.width;
 let cameraBoundsTop = 0;
 let cameraBoundsBottom // = mapAsset.width;
+
+let isMouseOnCanvas;
+let cursorRadius = 15;
+
+let windowDescription;
+
+let eventWindowNeededAmount = 0;
+let eventWindowSeenAmount = 0;
+
+let scrollingEnabled = true;
+let scrollVelocity = 1.2;
+let scrollDrag = 4;
+
+let targetCameraPositionX = 0;
+let targetCameraPositionY = 0;
+let difX = 0;
+let difY = 0;
 
 // to make it responsive
 function windowResized() {
@@ -86,18 +103,13 @@ function windowResized() {
 	//   image(img, -window.innerWidth/2, -window.innerHeight/2, window.innerWidth, window.innerHeight);
 	// }
 }
-
-let isMouseOnCanvas;
-let cursorRadius = 15;
 class Cursor {
 	constructor() {
 		this.radius = cursorRadius;
 	}
-  
 	changeIcon(newImage) {
 		this.currentImage = newImage;
 	}
-  
 	display() {
 		noCursor();
 		noStroke();
@@ -139,6 +151,14 @@ class Interactable {
 	  } else {
 		this.isHoveredOver = false;
 	  }
+	}
+	changeStateChecked() {
+		if(!this.isSeen) {
+			eventWindowSeenAmount += 1;
+			this.isSeen = true;
+		}
+		console.log(eventWindowNeededAmount);
+		console.log(eventWindowSeenAmount);
 	}
 	draw() {
 		push();
@@ -246,9 +266,6 @@ class Map {
 
 let map = new Map({});
 
-let windowDescription;
-let scrollingEnabled = true;
-
 function setHorizontalCameraBounds() {
 	cameraBoundsRight = mapAsset.width - window.innerWidth;
 	cameraBoundsBottom = mapAsset.height - window.innerHeight;
@@ -266,19 +283,11 @@ function mouseClicked() {
 			windowDescription.class("window-description");
 			scrollingEnabled = false;
 			windowDescription.mouseOver(() => {console.log('hover')});
-			window.isSeen = true;
+			window.changeStateChecked();
 		}
 	})
 	return false;
 }
-
-let scrollVelocity = 1.2;
-let scrollDrag = 4;
-
-let targetCameraPositionX = 0;
-let targetCameraPositionY = 0;
-let difX = 0;
-let difY = 0;
 
 function mouseDragged() {
 	if (scrollingEnabled) {
@@ -288,7 +297,6 @@ function mouseDragged() {
 		targetCameraPositionX = stayInBoundsX(targetCameraPositionX);
 		targetCameraPositionY = stayInBoundsY(targetCameraPositionY);
 	}
-
 	// prevent default
 	return false;
 }
@@ -333,10 +341,11 @@ function setup() {
 	background(9, 8, 7);
 
 	map.setup();
+
+	eventWindowNeededAmount = map.windowArray.length;
 }
 
 function draw() {
-
 	// smooth drag and pan
 	difX = targetCameraPositionX - cameraPositionX;
 	difY = targetCameraPositionY - cameraPositionY;
