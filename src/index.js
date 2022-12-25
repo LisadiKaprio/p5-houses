@@ -76,7 +76,8 @@ let cameraBoundsTop = 0;
 let cameraBoundsBottom // = mapAsset.width;
 
 let isMouseOnCanvas;
-let cursorRadius = 15;
+let cursorRadius = 30;
+let isCursorPointer = false;
 
 let windowDescription;
 
@@ -92,17 +93,6 @@ let targetCameraPositionY = 0;
 let difX = 0;
 let difY = 0;
 
-// to make it responsive
-function windowResized() {
-	resizeCanvas(window.innerWidth, window.innerHeight);
-	setHorizontalCameraBounds();
-	// if on smaller screen and portrait, don't use bg image 
-	// if (window.innerHeight > window.innerWidth*1.3 && window.innerWidth < 1000) {
-	//   background(10);
-	// } else {
-	//   image(img, -window.innerWidth/2, -window.innerHeight/2, window.innerWidth, window.innerHeight);
-	// }
-}
 class Cursor {
 	constructor() {
 		this.radius = cursorRadius;
@@ -111,19 +101,27 @@ class Cursor {
 		this.currentImage = newImage;
 	}
 	display() {
-		noCursor();
-		noStroke();
-		fill(9, 8, 7, 50);
-		circle(mouseX+ (mouseX*-0.03), mouseY+ (mouseY*-0.03), cursorRadius+10)
-		fill(9, 8, 7);
+		// noCursor();
+		if (isMouseHoveringOnInteractable()) cursor('pointer');
+		else cursor('grab');
+
+		// fill(0, 0, 0, 0);
+		// stroke(9, 8, 7, 50);
+		// strokeWeight(4);
+		// circle(mouseX+ (mouseX*-0.03), mouseY+ (mouseY*-0.03), cursorRadius+10)
+
+		fill(0, 0, 0, 0);
+		stroke(255, 255, 255, 50);
+		strokeWeight(3);
 		circle(mouseX, mouseY, cursorRadius+10);
+
 		if (this.currentImage) {
 			image(this.currentImage, mouseX, mouseY, cursorRadius+5, cursorRadius+5);
 		}
 	}
   }
 
-let cursor = new Cursor();
+let cursorInstance = new Cursor();
 
 class Interactable {
 	constructor(config) {
@@ -157,8 +155,6 @@ class Interactable {
 			eventWindowSeenAmount += 1;
 			this.isSeen = true;
 		}
-		console.log(eventWindowNeededAmount);
-		console.log(eventWindowSeenAmount);
 	}
 	draw() {
 		push();
@@ -175,7 +171,11 @@ class Interactable {
 class Window extends Interactable {
 	constructor(config) {
 		super(config);
-		this.story = config.story || 'Noone lives here. You can see empty rooms through the window.';
+		this.story1 = config.story1 || 'Person, 27.';
+		this.story2 = config.story2 || 'Sleeps.';
+		this.story3 = config.story3 || 'Calm.';
+		this.bgFile = config.descriptionBg || 'wohnung-1.jpeg';
+		this.iconFile = config.descriptionBg || 'wohnung-1.jpeg';
 	}
 }
 
@@ -193,7 +193,9 @@ class Map {
 					positionY: 477,
 					asset: w1HoverAsset,
 					assetSeen: w1SeenAsset,
-					story: "<b>Who:</b> Biology Teacher, 32 <br><br><b>Currently:</b> Getting ready for the work day. <br><br><b>Mood:</b> He feels stressed after he had a heated argument with his daughter over the phone yesterday. He regrets some of the things he said, and wants to apologize to her later this evening."
+					story1: "Biology Teacher, 32",
+					story2: "Getting ready for the work day.",
+					story3: "He feels stressed after he had a heated argument with his daughter over the phone yesterday. He regrets some of the things he said, and wants to apologize to her later this evening."
 				}),
 			this.window2 = new Window({
 					sizeX: w2HoverAsset.width,
@@ -202,7 +204,9 @@ class Map {
 					positionY: 595,
 					asset: w2HoverAsset,
 					assetSeen: w2SeenAsset,
-					story: "<b>Who:</b> Engineer, 28 <br><br><b>Currently:</b> Cooking breakfast: noodles and fried sausages with tomato sauce. His vacation started this Monday. <br><br><b>Mood:</b> Calmer than usual. Lightly excited, as he remembers his plans for this evening - going to a dress shop to see his future wife try the new bride dress on."
+					story1: "Engineer, 28",
+					story2: "Cooking breakfast: noodles and fried sausages with tomato sauce. His vacation started this Monday.",
+					story3: "Not as stressed, as he usually feels. Lightly excited, as he remembers his plans for this evening - going to a dress shop to see his future wife try the new bride dress on."
 				}),
 			this.window3 = new Window({
 					sizeX: w3HoverAsset.width,
@@ -211,7 +215,9 @@ class Map {
 					positionY: 100,
 					asset: w3HoverAsset,
 					assetSeen: w3SeenAsset,
-					story: "<b>Who:</b> Freelance Illustrator, 24 <br><br><b>Currently:</b> Sleeping after staying up working until 4am. <br><br><b>Mood:</b> Deep sleep."
+					story1: "Freelance Illustrator, 24",
+					story2: "Sleeping after staying up working until 4am.",
+					story3: "Deep sleep."
 				}),
 			this.window4 = new Window({
 					sizeX: w4HoverAsset.width,
@@ -220,7 +226,6 @@ class Map {
 					positionY: 1189,
 					asset: w4HoverAsset,
 					assetSeen: w4SeenAsset,
-					story: "<b>Who:</b> - <br><br><b>Currently:</b> - <br><br><b>Mood:</b> -"
 				}),
 			this.window5 = new Window({
 					sizeX: w5HoverAsset.width,
@@ -229,7 +234,6 @@ class Map {
 					positionY: 1344,
 					asset: w5HoverAsset,
 					assetSeen: w5SeenAsset,
-					story: "<b>Who:</b> - <br><br><b>Currently:</b> - <br><br><b>Mood:</b> -"
 				}),
 			this.window6 = new Window({
 					sizeX: w6HoverAsset.width,
@@ -238,7 +242,6 @@ class Map {
 					positionY: 1415,
 					asset: w6HoverAsset,
 					assetSeen: w6SeenAsset,
-					story: "<b>Who:</b> - <br><br><b>Currently:</b> - <br><br><b>Mood:</b> -"
 				}),
 			this.window7 = new Window({
 					sizeX: w7HoverAsset.width,
@@ -247,7 +250,6 @@ class Map {
 					positionY: 1446,
 					asset: w7HoverAsset,
 					assetSeen: w7SeenAsset,
-					story: "<b>Who:</b> - <br><br><b>Currently:</b> - <br><br><b>Mood:</b> -"
 				}),
 		]
 	};
@@ -266,23 +268,52 @@ class Map {
 
 let map = new Map({});
 
+// to make it responsive
+function windowResized() {
+	resizeCanvas(window.innerWidth, window.innerHeight);
+	setHorizontalCameraBounds();
+	// if on smaller screen and portrait, don't use bg image 
+	// if (window.innerHeight > window.innerWidth*1.3 && window.innerWidth < 1000) {
+	//   background(10);
+	// } else {
+	//   image(img, -window.innerWidth/2, -window.innerHeight/2, window.innerWidth, window.innerHeight);
+	// }
+}
+
 function setHorizontalCameraBounds() {
 	cameraBoundsRight = mapAsset.width - window.innerWidth;
 	cameraBoundsBottom = mapAsset.height - window.innerHeight;
 }
 
+function isMouseHoveringOnInteractable() {
+	return map.windowArray.some(obj => {
+		return obj.isHoveredOver;
+	  });
+}
+
 function mouseClicked() {
-	if(windowDescription && isMouseOnCanvas){
-		windowDescription.remove();
+	if(windowDescription.hasClass("window-description") && isMouseOnCanvas) {
+		windowDescription.removeClass("window-description");
+		windowDescription.class("window-description-hidden");
 		scrollingEnabled = true;
 	}
 	map.windowArray.forEach(window => {
-		if(window.isHoveredOver){
-			windowDescription = createDiv(window.story);
+		if(window.isHoveredOver) {
+			// if(windowDescription.hasClass("window-description")) { 
+			// 	windowDescription.removeClass("window-description");
+			// 	windowDescription.class("window-description-hidden");
+			// }
+
+			// windowDescription.html(window.story);
+			select('.first-text').html(window.story1);
+			select('.second-text').html(window.story2);
+			select('.third-text').html(window.story3);
+
 			windowDescription.position(mouseX, mouseY);
 			windowDescription.class("window-description");
+			windowDescription.style(`background-image: url('./src/assets/${window.bgFile}');`)
 			scrollingEnabled = false;
-			windowDescription.mouseOver(() => {console.log('hover')});
+			// windowDescription.mouseOver(() => {console.log('hover')});
 			window.changeStateChecked();
 		}
 	})
@@ -340,6 +371,8 @@ function setup() {
 
 	background(9, 8, 7);
 
+	windowDescription = select('.window-description-hidden');
+
 	map.setup();
 
 	eventWindowNeededAmount = map.windowArray.length;
@@ -357,5 +390,5 @@ function draw() {
 
 	map.draw();
 
-	cursor.display();
+	cursorInstance.display();
 }
