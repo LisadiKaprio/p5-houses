@@ -33,6 +33,11 @@ body {
   background-color: #a295b5;
   background-size: cover;
   background-position: center;
+
+  display: flex;
+  flex-direction: column;
+  align-content: flex-start;
+  justify-content: flex-start;
   /* border: 3px solid #99A083; */
   /* color: #785D41; */
   /* box-shadow: 3px 3px 5px #785e4175; */
@@ -46,4 +51,14 @@ body {
 
 .window-description-hidden {
   display: none;
+}
+
+.icon-container {
+  align-self: flex-end;
+}
+
+.icon-container .frame {
+  width: 100px;
+  height: 100px;
+  background-size: cover;
 }

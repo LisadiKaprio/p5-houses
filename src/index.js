@@ -20,6 +20,7 @@ let houseAsset3;
 let houseAsset4;
 let houseAsset5;
 let mapAsset;
+let mapAssetChanged;
 let w1HoverAsset;
 let w1SeenAsset;
 let w2HoverAsset;
@@ -44,6 +45,7 @@ function preload () {
 	houseAsset4 = loadImage('src/assets/4.png');
 	houseAsset5 = loadImage('src/assets/5.png');
 	mapAsset = loadImage('src/assets/map-1.jpg');
+	mapAssetChanged = loadImage('src/assets/map-3.jpg');
 	w1HoverAsset = loadImage('src/assets/w1-hover.jpg');
 	w1SeenAsset = loadImage('src/assets/w1-seen.jpg');
 	w2HoverAsset = loadImage('src/assets/w2-hover.jpg');
@@ -113,10 +115,10 @@ class Cursor {
 		fill(0, 0, 0, 0);
 		stroke(255, 255, 255, 50);
 		strokeWeight(3);
-		circle(mouseX, mouseY, cursorRadius+10);
+		circle(mouseX, mouseY, this.radius+10);
 
 		if (this.currentImage) {
-			image(this.currentImage, mouseX, mouseY, cursorRadius+5, cursorRadius+5);
+			image(this.currentImage, mouseX, mouseY, this.radius+5, this.radius+5);
 		}
 	}
   }
@@ -174,8 +176,9 @@ class Window extends Interactable {
 		this.story1 = config.story1 || 'Person, 27.';
 		this.story2 = config.story2 || 'Sleeps.';
 		this.story3 = config.story3 || 'Calm.';
-		this.bgFile = config.descriptionBg || 'wohnung-1.jpeg';
-		this.iconFile = config.descriptionBg || 'wohnung-1.jpeg';
+		this.bgFile = config.bgFile || 'wohnung-1.jpeg';
+		this.iconFrameOneFile = config.iconFrameOneFile || 'icon-b1.png';
+		this.iconFrameTwoFile = config.iconFrameTwoFile || 'icon-a2.png';
 	}
 }
 
@@ -185,6 +188,7 @@ class Map {
 		this.y = config.x || 0;
 	}
 	setup() {
+		this.currentMap = mapAsset;
 		this.windowArray = [
 			this.window1 = new Window({
 					sizeX: w1HoverAsset.width,
@@ -193,6 +197,7 @@ class Map {
 					positionY: 477,
 					asset: w1HoverAsset,
 					assetSeen: w1SeenAsset,
+					iconFrameOneFile: 'icon-a1.png',
 					story1: "Biology Teacher, 32",
 					story2: "Getting ready for the work day.",
 					story3: "He feels stressed after he had a heated argument with his daughter over the phone yesterday. He regrets some of the things he said, and wants to apologize to her later this evening."
@@ -204,6 +209,7 @@ class Map {
 					positionY: 595,
 					asset: w2HoverAsset,
 					assetSeen: w2SeenAsset,
+					iconFrameOneFile: 'icon-b1.png',
 					story1: "Engineer, 28",
 					story2: "Cooking breakfast: noodles and fried sausages with tomato sauce. His vacation started this Monday.",
 					story3: "Not as stressed, as he usually feels. Lightly excited, as he remembers his plans for this evening - going to a dress shop to see his future wife try the new bride dress on."
@@ -215,6 +221,7 @@ class Map {
 					positionY: 100,
 					asset: w3HoverAsset,
 					assetSeen: w3SeenAsset,
+					iconFrameOneFile: 'icon-c1.png',
 					story1: "Freelance Illustrator, 24",
 					story2: "Sleeping after staying up working until 4am.",
 					story3: "Deep sleep."
@@ -252,11 +259,15 @@ class Map {
 					assetSeen: w7SeenAsset,
 				}),
 		]
-	};
+	}
+	changeState() {
+		this.currentMap = mapAssetChanged;
+		this.windowArray = [];
+	}
 	draw() {
 		push();
 		translate(-cameraPositionX, -cameraPositionY);
-		image(mapAsset, this.x, this.y);
+		image(this.currentMap, this.x, this.y);
 		this.windowArray.forEach(window => {
 			window.currentPositionX = window.positionX - cameraPositionX;
 			window.currentPositionY = window.positionY - cameraPositionY;
@@ -296,15 +307,13 @@ function mouseClicked() {
 		windowDescription.removeClass("window-description");
 		windowDescription.class("window-description-hidden");
 		scrollingEnabled = true;
+
+		if (eventWindowSeenAmount >= eventWindowNeededAmount ) {
+			map.changeState();
+		}
 	}
 	map.windowArray.forEach(window => {
 		if(window.isHoveredOver) {
-			// if(windowDescription.hasClass("window-description")) { 
-			// 	windowDescription.removeClass("window-description");
-			// 	windowDescription.class("window-description-hidden");
-			// }
-
-			// windowDescription.html(window.story);
 			select('.first-text').html(window.story1);
 			select('.second-text').html(window.story2);
 			select('.third-text').html(window.story3);
@@ -312,6 +321,8 @@ function mouseClicked() {
 			windowDescription.position(mouseX, mouseY);
 			windowDescription.class("window-description");
 			windowDescription.style(`background-image: url('./src/assets/${window.bgFile}');`)
+			select('.frame').style(`background-image: url('./src/assets/${window.iconFrameOneFile}');`)
+			// select('.frame-two').style(`background-image: url('./src/assets/${window.iconFrameTwoFile}');`)
 			scrollingEnabled = false;
 			// windowDescription.mouseOver(() => {console.log('hover')});
 			window.changeStateChecked();
@@ -322,6 +333,8 @@ function mouseClicked() {
 
 function mouseDragged() {
 	if (scrollingEnabled) {
+		cursorInstance.radius = cursorRadius - 10;
+
 		targetCameraPositionX -= movedX * scrollVelocity;
 		targetCameraPositionY -= movedY * scrollVelocity;
 
@@ -330,6 +343,10 @@ function mouseDragged() {
 	}
 	// prevent default
 	return false;
+}
+
+function mouseReleased() {
+	cursorInstance.radius = cursorRadius;
 }
 
 function stayInBoundsX(inputValueX) {
