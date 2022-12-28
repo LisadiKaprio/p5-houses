@@ -148,6 +148,7 @@ class Interactable {
 		this.isHoveredOver = false;
 		this.isSeen = false;
 	}
+	
 	checkMouseOver() {
 	  if (
 		mouseX > this.currentPositionX &&
@@ -160,19 +161,31 @@ class Interactable {
 		this.isHoveredOver = false;
 	  }
 	}
+	
 	changeStateChecked() {
 		if(!this.isSeen) {
 			eventWindowSeenAmount += 1;
 			this.isSeen = true;
 		}
 	}
+	
+	drawFrame(animation) {
+		if (animation.length) {
+			let frameTime = 10;
+			let frame = floor((frameCount % (animation.length * frameTime)) / frameTime);
+			this.renderedImage = image(animation[frame], this.positionX, this.positionY);
+		} else {
+			this.renderedImage = image(animation, this.positionX, this.positionY);
+		}
+	}
+
 	draw() {
 		push();
 		this.checkMouseOver();
 		if (this.isHoveredOver) {
-			this.renderedImage = image(this.asset, this.positionX, this.positionY);
+			this.drawFrame(this.asset)
 		} else if (this.isSeen) {
-			this.renderedImage = image(this.assetSeen, this.positionX, this.positionY);
+			this.drawFrame(this.assetSeen);
 		}
 		pop();
 	}
@@ -204,8 +217,8 @@ class Map {
 					sizeY: w1HoverAsset.height,
 					positionX: 558,
 					positionY: 477,
-					asset: w1HoverAsset,
-					assetSeen: w1SeenAsset,
+					asset: [w1HoverAsset, w1SeenAsset, w2HoverAsset, w2SeenAsset],
+					assetSeen: [w2SeenAsset, w1SeenAsset],
 					iconFrameOneFile: 'icon-a1.png',
 					story1: "Biology Teacher, 32",
 					story2: "Getting ready for the work day.",
@@ -407,6 +420,7 @@ function stayInBoundsY(inputValueY) {
 }
 
 function setup() {
+	frameRate(30);
 	wholeCanvas = createCanvas(window.innerWidth, window.innerHeight);
 	// check if mouse in inside
 	wholeCanvas.mouseOver(() => { isMouseOnCanvas = true});
