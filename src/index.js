@@ -38,6 +38,10 @@ let w7SeenAsset;
 let selection1Asset;
 let selection2Asset;
 let selection3Asset;
+let gradient1;
+let gradient2;
+let gradient3;
+let gradient4;
 
 function preload () {
 	houseAsset2 = loadImage('src/assets/2.png');
@@ -63,6 +67,10 @@ function preload () {
 	selection1Asset = loadImage('src/assets/selection1.png');
 	selection2Asset = loadImage('src/assets/selection2.png');
 	selection3Asset = loadImage('src/assets/selection3.png');
+	gradient1 = loadImage('src/assets/gradient1.png');
+	gradient2 = loadImage('src/assets/gradient2.png');
+	gradient3 = loadImage('src/assets/gradient3.png');
+	gradient4 = loadImage('src/assets/gradient4.png');
 }
 
 // some value that makes sure the assets are displayed in reasonable size within the window
@@ -186,6 +194,7 @@ class Map {
 	constructor(config) {
 		this.x = config.x || 0; 
 		this.y = config.x || 0;
+		this.stateChanged = false;
 	}
 	setup() {
 		this.currentMap = mapAsset;
@@ -261,10 +270,16 @@ class Map {
 		]
 	}
 	changeState() {
+		this.stateChanged = true;
 		this.currentMap = mapAssetChanged;
 		this.windowArray = [];
 	}
+	drawGradient(gradient) {
+		image(gradient, 0, 0);
+		gradient.resize(window.innerWidth,window.innerHeight);
+	}
 	draw() {
+		// draggable elements
 		push();
 		translate(-cameraPositionX, -cameraPositionY);
 		image(this.currentMap, this.x, this.y);
@@ -273,6 +288,28 @@ class Map {
 			window.currentPositionY = window.positionY - cameraPositionY;
 			window.draw();
 		})
+		pop();
+
+		// static elements
+		push();
+		const aa = 0;
+		const ab = 2;
+		const ac = 4;
+		const ad = 6;
+		const ae = 7;
+		if (!this.stateChanged) {
+			if (eventWindowSeenAmount >= aa && eventWindowSeenAmount <= ab) {
+				this.drawGradient(gradient1);
+			} else if (eventWindowSeenAmount >= (ab+1) && eventWindowSeenAmount <= ac) {
+				this.drawGradient(gradient2);
+			} else if (eventWindowSeenAmount >= (ac+1) && eventWindowSeenAmount <= ad) {
+				this.drawGradient(gradient3);
+			} else if (eventWindowSeenAmount >= (ad+1) && eventWindowSeenAmount <= ae) {
+				this.drawGradient(gradient4);
+			}else {
+				this.drawGradient(gradient4);
+			}
+		}
 		pop();
 	}
 }
