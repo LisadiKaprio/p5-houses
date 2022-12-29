@@ -87,6 +87,7 @@ let cameraBoundsBottom // = mapAsset.width;
 
 let isMouseOnCanvas;
 let cursorRadius = 30;
+let cursorStrokeWeight = 3;
 let isCursorPointer = false;
 
 let windowDescription;
@@ -106,6 +107,7 @@ let difY = 0;
 class Cursor {
 	constructor() {
 		this.radius = cursorRadius;
+		this.strokeWeight = cursorStrokeWeight;
 	}
 	changeIcon(newImage) {
 		this.currentImage = newImage;
@@ -122,7 +124,7 @@ class Cursor {
 
 		fill(0, 0, 0, 0);
 		stroke(255, 255, 255, 50);
-		strokeWeight(3);
+		strokeWeight(this.strokeWeight);
 		circle(mouseX, mouseY, this.radius+10);
 
 		if (this.currentImage) {
@@ -198,8 +200,8 @@ class Window extends Interactable {
 		this.story2 = config.story2 || 'Sleeps.';
 		this.story3 = config.story3 || 'Calm.';
 		this.bgFile = config.bgFile || 'wohnung-1.jpeg';
-		this.iconFrameOneFile = config.iconFrameOneFile || 'icon-b1.png';
-		this.iconFrameTwoFile = config.iconFrameTwoFile || 'icon-a2.png';
+		this.personOneAsset = config.personOneAsset || 'person1.png';
+		this.personTwoAsset = config.personTwoAsset || '';
 	}
 }
 
@@ -217,12 +219,12 @@ class Map {
 					sizeY: w1HoverAsset.height,
 					positionX: 558,
 					positionY: 477,
-					asset: [w1HoverAsset, w1SeenAsset, w2HoverAsset, w2SeenAsset],
-					assetSeen: [w2SeenAsset, w1SeenAsset],
-					iconFrameOneFile: 'icon-a1.png',
-					story1: "Biology Teacher, 32",
-					story2: "Getting ready for the work day.",
-					story3: "He feels stressed after he had a heated argument with his daughter over the phone yesterday. He regrets some of the things he said, and wants to apologize to her later this evening."
+					asset: w1SeenAsset,
+					assetSeen: w1SeenAsset,
+					personOneAsset: 'person1.png',
+					story1: "Literature Teacher, 25",
+					story2: "tired, grumpy, focused",
+					story3: "She had a late night grading papers and preparing lessons for her third grade class, and is having a hard time waking up. She hits the snooze button a few times before dragging herself out of bed and into the shower. As she gets dressed, she thinks about the pile of papers on her desk that still need to be graded and sighs. She makes herself a cup of coffee and a slice of toast before sitting down at the kitchen table to check her email and plan out her day. She has a meeting with the principal at 9:30, followed by back-to-back classes all day. She remembers that she also promised to help out with the school's bake sale on Friday and groans at the thought of having to come up with something to bake. As she finishes her breakfast, she reminds herself that she loves her job and that it's all worth it in the end."
 				}),
 			this.window2 = new Window({
 					sizeX: w2HoverAsset.width,
@@ -231,10 +233,10 @@ class Map {
 					positionY: 595,
 					asset: w2HoverAsset,
 					assetSeen: w2SeenAsset,
-					iconFrameOneFile: 'icon-b1.png',
-					story1: "Engineer, 28",
-					story2: "Cooking breakfast: noodles and fried sausages with tomato sauce. His vacation started this Monday.",
-					story3: "Not as stressed, as he usually feels. Lightly excited, as he remembers his plans for this evening - going to a dress shop to see his future wife try the new bride dress on."
+					personOneAsset: 'person2.png',
+					story1: "Engineer, 35",
+					story2: "lightly energized, tummy aches, excited",
+					story3: "He had a great time out with friends last night and is in a good mood. He gets out of bed and stretches before heading to the kitchen to start his morning routine. He puts on a pot of coffee and goes for a quick jog around the neighborhood to clear his head. When he gets back, he takes a shower and gets dressed for work, feeling refreshed and ready to take on the day. As he packs his lunch and gathers his things, he hums a tune to himself happily. Later in the day, he has a meeting with his boss to discuss a potential promotion to director of engineering, which has him feeling a bit anxious but also excited. He's been working hard and feels ready for the next step in his career. He just hopes that he can nail the meeting and impress his boss. As he heads out the door, he reminds himself to stay calm and confident."
 				}),
 			this.window3 = new Window({
 					sizeX: w3HoverAsset.width,
@@ -243,10 +245,11 @@ class Map {
 					positionY: 100,
 					asset: w3HoverAsset,
 					assetSeen: w3SeenAsset,
-					iconFrameOneFile: 'icon-c1.png',
-					story1: "Freelance Illustrator, 24",
-					story2: "Sleeping after staying up working until 4am.",
-					story3: "Deep sleep."
+					personOneAsset: 'person3.png',
+					personTwoAsset: 'person4.png',
+					story1: "Nurse, 35",
+					story2: "fatigue, stress, focused",
+					story3: "She had a long and stressful shift at the hospital yesterday and is having a hard time shaking off the fatigue. She gets out of bed and stretches before heading to the kitchen to start her morning routine. She puts on a pot of coffee and sits down at the kitchen table to have a cup of tea and think about her day. She thinks about her teenage daughter who is struggling in school and wonders how she can help her. She knows that her daughter is feeling overwhelmed and stressed, and Sara wishes she could take some of that burden off her shoulders. Sara remembers that she promised to attend a parent-teacher conference later in the week and makes a mental note to clear her schedule for that. Later in the week, Sara has a doctor's appointment to discuss some nagging health concerns, which has her feeling a bit worried. She's been having some stomach issues and fatigue, and is hoping that the doctor can help her figure out what's going on. As she finishes her tea and gets ready to head out the door, she reminds herself to stay positive and take care of herself."
 				}),
 			this.window4 = new Window({
 					sizeX: w4HoverAsset.width,
@@ -371,8 +374,9 @@ function mouseClicked() {
 			windowDescription.position(mouseX, mouseY);
 			windowDescription.class("window-description");
 			windowDescription.style(`background-image: url('./src/assets/${window.bgFile}');`)
-			select('.frame').style(`background-image: url('./src/assets/${window.iconFrameOneFile}');`)
-			// select('.frame-two').style(`background-image: url('./src/assets/${window.iconFrameTwoFile}');`)
+			select('.person-one').style(`background-image: url('./src/assets/${window.personOneAsset}');`)
+			select('.person-two').style(`background-image: url('./src/assets/${window.personTwoAsset}');`)
+			// select('.frame-two').style(`background-image: url('./src/assets/${window.personTwoAsset}');`)
 			scrollingEnabled = false;
 			// windowDescription.mouseOver(() => {console.log('hover')});
 			window.changeStateChecked();
@@ -384,6 +388,7 @@ function mouseClicked() {
 function mouseDragged() {
 	if (scrollingEnabled) {
 		cursorInstance.radius = cursorRadius - 10;
+		cursorInstance.strokeWeight = cursorStrokeWeight + 1;
 
 		targetCameraPositionX -= movedX * scrollVelocity;
 		targetCameraPositionY -= movedY * scrollVelocity;
@@ -397,6 +402,7 @@ function mouseDragged() {
 
 function mouseReleased() {
 	cursorInstance.radius = cursorRadius;
+	cursorInstance.strokeWeight = cursorStrokeWeight;
 }
 
 function stayInBoundsX(inputValueX) {

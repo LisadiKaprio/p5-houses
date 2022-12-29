@@ -20,7 +20,7 @@ body {
 .window-description {
   font-size: 12px;
   /* font-weight: 600; */
-  width: 240px;
+  width: 450px;
   height: auto;
   color: rgba(9,8,7);
 
@@ -29,6 +29,7 @@ body {
   box-shadow: 0px 0px 5px  rgba(116, 87, 72,100);
 
   padding: 12px;
+  padding-bottom: 0px;
 
   background-color: #a295b5;
   background-size: cover;
@@ -49,16 +50,30 @@ body {
   margin-bottom: 4px;
 }
 
+.third-section {
+  margin-top: 12px;
+  margin-right: 50px;
+}
+
+/* .third-text {
+  float: left;
+  shape-outside: circle(50%);
+  width: 200px;
+  height: 200px;
+} */
+
 .window-description-hidden {
   display: none;
 }
 
-.icon-container {
+.person-container {
   align-self: flex-end;
+  display: flex;
+  flex-direction: row-reverse;
 }
 
-.icon-container .frame {
-  width: 100px;
-  height: 100px;
+.person-container .person {
+  width: 200px;
+  height: 200px;
   background-size: cover;
 }
