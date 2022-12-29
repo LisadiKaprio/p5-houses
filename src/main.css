@@ -23,6 +23,7 @@ body {
   width: 450px;
   height: auto;
   color: rgba(9,8,7);
+  text-shadow: 0px 0px 3px white;
 
   border-radius: 0px 8px 8px 8px;
   border: 3px solid rgb(116, 87, 72);

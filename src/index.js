@@ -199,7 +199,7 @@ class Window extends Interactable {
 		this.story1 = config.story1 || 'Person, 27.';
 		this.story2 = config.story2 || 'Sleeps.';
 		this.story3 = config.story3 || 'Calm.';
-		this.bgFile = config.bgFile || 'wohnung-1.jpeg';
+		this.bgFile = config.bgFile || 'wohnung-2.jpg';
 		this.personOneAsset = config.personOneAsset || 'person1.png';
 		this.personTwoAsset = config.personTwoAsset || '';
 	}
@@ -373,7 +373,9 @@ function mouseClicked() {
 
 			windowDescription.position(mouseX, mouseY);
 			windowDescription.class("window-description");
-			windowDescription.style(`background-image: url('./src/assets/${window.bgFile}');`)
+			const bgColor = 'rgba(255,255,255,0.95)' 
+			const bgColorBottom = 'rgba(255,255,255,0.85)' 
+			windowDescription.style(`background-image: linear-gradient(0deg, ${bgColorBottom}, ${bgColor}), url('./src/assets/${window.bgFile}');`)
 			select('.person-one').style(`background-image: url('./src/assets/${window.personOneAsset}');`)
 			select('.person-two').style(`background-image: url('./src/assets/${window.personTwoAsset}');`)
 			// select('.frame-two').style(`background-image: url('./src/assets/${window.personTwoAsset}');`)
