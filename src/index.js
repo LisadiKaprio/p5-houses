@@ -14,6 +14,8 @@
 //   content of windows
 //   sprites of assets, sprite of map
 
+// import gsap from "gsap";
+// const gsap = require("./gsap");
 
 let houseAsset2;
 let houseAsset3;
@@ -367,6 +369,13 @@ function mouseClicked() {
 	}
 	map.windowArray.forEach(window => {
 		if(window.isHoveredOver) {
+			gsap.from('.stagger-animation', {
+			  duration: 0.5,
+			  opacity: 0,
+			  y: 15,
+			  ease: 'power1',
+			  stagger: 0.1
+			});
 			select('.first-text').html(window.story1);
 			select('.second-text').html(window.story2);
 			select('.third-text').html(window.story3);
