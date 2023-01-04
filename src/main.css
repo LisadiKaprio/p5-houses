@@ -1,8 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
 
 html,
 body {
-  font-family: 'Open Sans', sans-serif;
+  /* font-family: 'Patrick Hand', cursive; */
+
+  font-family: 'Indie Flower', cursive;
+
   margin: 0;
   padding: 0;
   display: grid;
@@ -18,23 +23,28 @@ body {
 }
 
 .window-description {
-  font-size: 12px;
+  font-size: 20px;
+  line-height: 175%;
   /* font-weight: 600; */
-  width: 450px;
+  width: 40%;
   height: auto;
-  color: rgba(9,8,7);
-  text-shadow: 0px 0px 3px white;
+  color: rgba(255,255,255,0.5);
+  text-shadow: 0px 0px 1px rgba(255,255,255,0.15);
 
   border-radius: 0px 8px 8px 8px;
-  border: 3px solid rgb(116, 87, 72);
-  box-shadow: 0px 0px 5px  rgba(116, 87, 72,100);
+  /* border: 3px solid rgb(116, 87, 72);
+  box-shadow: 0px 0px 5px rgba(116, 87, 72,100); */
+  border: 3px solid rgb(9,8,7);
+  box-shadow: 0px 0px 5px rgba(9,8,7);
 
-  padding: 12px;
-  padding-bottom: 0px;
+  padding: 5%;
+  /* padding-top: 48px;
+  padding-bottom: 48px; */
 
   background-color: #a295b5;
   background-size: cover;
-  background-position: center;
+  /* background-position: center; */
+  background-position: bottom;
 
   display: flex;
   flex-direction: column;
@@ -46,14 +56,13 @@ body {
   /* box-shadow: 3px 3px 5px rgba(9,8,7,30); */
 }
   
-.description-section h2 {
+/* .description-section h2 {
   margin-top: 8px;
   margin-bottom: 4px;
-}
+} */
 
-.third-section {
+.third-text {
   margin-top: 12px;
-  margin-right: 50px;
 }
 
 /* .third-text {

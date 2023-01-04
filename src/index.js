@@ -199,7 +199,7 @@ class Window extends Interactable {
 	constructor(config) {
 		super(config);
 		this.story1 = config.story1 || 'Person, 27.';
-		this.story2 = config.story2 || 'Sleeps.';
+		this.story2 = config.story2 || '';
 		this.story3 = config.story3 || 'Calm.';
 		this.bgFile = config.bgFile || 'wohnung-2.jpg';
 		this.personOneAsset = config.personOneAsset || 'person1.png';
@@ -225,7 +225,7 @@ class Map {
 					assetSeen: w1SeenAsset,
 					personOneAsset: 'person1.png',
 					story1: "Literature Teacher, 25",
-					story2: "tired, grumpy, focused",
+					story2: "",
 					story3: "She had a late night grading papers and preparing lessons for her third grade class, and is having a hard time waking up. She hits the snooze button a few times before dragging herself out of bed and into the shower. As she gets dressed, she thinks about the pile of papers on her desk that still need to be graded and sighs. She makes herself a cup of coffee and a slice of toast before sitting down at the kitchen table to check her email and plan out her day. She has a meeting with the principal at 9:30, followed by back-to-back classes all day. She remembers that she also promised to help out with the school's bake sale on Friday and groans at the thought of having to come up with something to bake. As she finishes her breakfast, she reminds herself that she loves her job and that it's all worth it in the end."
 				}),
 			this.window2 = new Window({
@@ -237,7 +237,7 @@ class Map {
 					assetSeen: w2SeenAsset,
 					personOneAsset: 'person2.png',
 					story1: "Engineer, 35",
-					story2: "lightly energized, tummy aches, excited",
+					story2: "",
 					story3: "He had a great time out with friends last night and is in a good mood. He gets out of bed and stretches before heading to the kitchen to start his morning routine. He puts on a pot of coffee and goes for a quick jog around the neighborhood to clear his head. When he gets back, he takes a shower and gets dressed for work, feeling refreshed and ready to take on the day. As he packs his lunch and gathers his things, he hums a tune to himself happily. Later in the day, he has a meeting with his boss to discuss a potential promotion to director of engineering, which has him feeling a bit anxious but also excited. He's been working hard and feels ready for the next step in his career. He just hopes that he can nail the meeting and impress his boss. As he heads out the door, he reminds himself to stay calm and confident."
 				}),
 			this.window3 = new Window({
@@ -250,7 +250,7 @@ class Map {
 					personOneAsset: 'person3.png',
 					personTwoAsset: 'person4.png',
 					story1: "Nurse, 35",
-					story2: "fatigue, stress, focused",
+					story2: "",
 					story3: "She had a long and stressful shift at the hospital yesterday and is having a hard time shaking off the fatigue. She gets out of bed and stretches before heading to the kitchen to start her morning routine. She puts on a pot of coffee and sits down at the kitchen table to have a cup of tea and think about her day. She thinks about her teenage daughter who is struggling in school and wonders how she can help her. She knows that her daughter is feeling overwhelmed and stressed, and Sara wishes she could take some of that burden off her shoulders. Sara remembers that she promised to attend a parent-teacher conference later in the week and makes a mental note to clear her schedule for that. Later in the week, Sara has a doctor's appointment to discuss some nagging health concerns, which has her feeling a bit worried. She's been having some stomach issues and fatigue, and is hoping that the doctor can help her figure out what's going on. As she finishes her tea and gets ready to head out the door, she reminds herself to stay positive and take care of herself."
 				}),
 			this.window4 = new Window({
@@ -370,10 +370,10 @@ function mouseClicked() {
 	map.windowArray.forEach(window => {
 		if(window.isHoveredOver) {
 			gsap.from('.stagger-animation', {
-			  duration: 0.5,
+			  duration: 1,
 			  opacity: 0,
 			  y: 15,
-			  ease: 'power1',
+			  ease: 'power4',
 			  stagger: 0.1
 			});
 			select('.first-text').html(window.story1);
@@ -382,11 +382,11 @@ function mouseClicked() {
 
 			windowDescription.position(mouseX, mouseY);
 			windowDescription.class("window-description");
-			const bgColor = 'rgba(255,255,255,0.95)' 
-			const bgColorBottom = 'rgba(255,255,255,0.85)' 
+			const bgColor = 'rgba(9,8,7,0.95)' 
+			const bgColorBottom = 'rgba(9,8,7,0.85)' 
 			windowDescription.style(`background-image: linear-gradient(0deg, ${bgColorBottom}, ${bgColor}), url('./src/assets/${window.bgFile}');`)
-			select('.person-one').style(`background-image: url('./src/assets/${window.personOneAsset}');`)
-			select('.person-two').style(`background-image: url('./src/assets/${window.personTwoAsset}');`)
+			// select('.person-one').style(`background-image: url('./src/assets/${window.personOneAsset}');`)
+			// select('.person-two').style(`background-image: url('./src/assets/${window.personTwoAsset}');`)
 			// select('.frame-two').style(`background-image: url('./src/assets/${window.personTwoAsset}');`)
 			scrollingEnabled = false;
 			// windowDescription.mouseOver(() => {console.log('hover')});
