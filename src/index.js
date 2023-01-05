@@ -137,6 +137,61 @@ class Cursor {
 
 let cursorInstance = new Cursor();
 
+class Firefly {
+	constructor(x, y) {
+	  // Set the initial position of the firefly
+	  this.startX = x;
+	  this.startY = y;
+	  this.x = this.startX;
+	  this.y = this.startY;
+  
+	  // Set the radius of the firefly
+	  this.r = 1;
+  
+	  // Set the speed at which the firefly flies around
+	  this.speed = 2;
+  
+	  // Set the direction in which the firefly flies (in degrees)
+	  this.direction = 0;
+	}
+  
+	move() {
+		// Update the direction of the firefly
+		this.direction += random(-30, 30);
+	
+		// Convert the direction to radians
+		let radians = this.direction * Math.PI / 180;
+
+		// Calculate the new position of the firefly based on its speed and direction
+		this.x += this.speed * Math.cos(radians);
+		this.y += this.speed * Math.sin(radians);
+	  
+		// Check if the firefly has gone too far from its initial position
+		let maxDistance = 50;
+		let distance = dist(this.x, this.y, this.startX, this.startY);
+		if (distance > maxDistance) {
+		  // If the firefly has gone too far, reverse its direction
+		  this.direction += random(5, 10);
+		}
+	}
+  
+	display() {
+		this.move();
+	  // Draw the firefly as a white circle
+	  drawingContext.shadowBlur = 6;
+	  drawingContext.shadowColor = 255;
+	  fill(255, 255, 255, 90);
+	  ellipse(this.x, this.y, this.r * 2, this.r * 2);
+	}
+  }
+
+  let fireflies = [
+	new Firefly(806, 695),
+	new Firefly(850, 690),
+	new Firefly(844, 709),
+	new Firefly(1390, 901),
+	new Firefly(1358, 905),
+  ]
 class Interactable {
 	constructor(config) {
 		// super();
@@ -299,13 +354,29 @@ class Map {
 	draw() {
 		// draggable elements
 		push();
+		
+		if (shouldCanvasScaleUp()) {
+			scale(window.innerWidth/mapAsset.width);
+		}
 		translate(-cameraPositionX, -cameraPositionY);
 		image(this.currentMap, this.x, this.y);
 		this.windowArray.forEach(window => {
 			window.currentPositionX = window.positionX - cameraPositionX;
 			window.currentPositionY = window.positionY - cameraPositionY;
+			console.log(window.currentPositionX);
+			if (shouldCanvasScaleUp()) {
+				window.currentPositionX * (window.innerWidth/mapAsset.width);
+				window.currentPositionY * (window.innerWidth/mapAsset.width);
+				console.log(window.currentPositionX);
+				debugger;
+			}
 			window.draw();
 		})
+
+		fireflies.forEach(firefly => {
+			firefly.display();
+		});
+
 		pop();
 
 		// static elements
@@ -344,6 +415,10 @@ function windowResized() {
 	// } else {
 	//   image(img, -window.innerWidth/2, -window.innerHeight/2, window.innerWidth, window.innerHeight);
 	// }
+}
+
+function shouldCanvasScaleUp() {
+	return window.innerWidth > mapAsset.width;
 }
 
 function setHorizontalCameraBounds() {
