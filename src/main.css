@@ -26,12 +26,12 @@ body {
   font-size: 20px;
   line-height: 175%;
   /* font-weight: 600; */
-  width: 40%;
+  width: 35%;
   height: auto;
   color: rgba(255,255,255,0.5);
   text-shadow: 0px 0px 1px rgba(255,255,255,0.15);
 
-  border-radius: 0px 8px 8px 8px;
+  border-radius: 8px;
   /* border: 3px solid rgb(116, 87, 72);
   box-shadow: 0px 0px 5px rgba(116, 87, 72,100); */
   border: 3px solid rgb(9,8,7);

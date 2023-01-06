@@ -281,6 +281,7 @@ class Map {
 					positionY: 477,
 					asset: w1SeenAsset,
 					assetSeen: w1SeenAsset,
+					bgFile: 'wohnung-4.jpg',
 					personOneAsset: 'person1.png',
 					story1: "Literature Teacher, 25",
 					story2: "",
@@ -453,8 +454,8 @@ function mouseClicked() {
 			map.changeState();
 		}
 	}
-	map.windowArray.forEach(window => {
-		if(window.isHoveredOver) {
+	map.windowArray.forEach(selectedWindow => {
+		if(selectedWindow.isHoveredOver) {
 			gsap.from('.stagger-animation', {
 			  duration: 1,
 			  opacity: 0,
@@ -462,21 +463,24 @@ function mouseClicked() {
 			  ease: 'power4',
 			  stagger: 0.1
 			});
-			select('.first-text').html(window.story1);
-			select('.second-text').html(window.story2);
-			select('.third-text').html(window.story3);
-
-			windowDescription.position(mouseX, mouseY);
+			select('.first-text').html(selectedWindow.story1);
+			select('.second-text').html(selectedWindow.story2);
+			select('.third-text').html(selectedWindow.story3);
+			if (mouseX > (window.innerWidth * 0.6)) {
+				windowDescription.position(mouseX - (window.innerWidth * 0.45), mouseY);
+			} else {
+				windowDescription.position(mouseX, mouseY);
+			}
 			windowDescription.class("window-description");
 			const bgColor = 'rgba(9,8,7,0.95)' 
 			const bgColorBottom = 'rgba(9,8,7,0.85)' 
-			windowDescription.style(`background-image: linear-gradient(0deg, ${bgColorBottom}, ${bgColor}), url('./src/assets/${window.bgFile}');`)
+			windowDescription.style(`background-image: linear-gradient(0deg, ${bgColorBottom}, ${bgColor}), url('./src/assets/${selectedWindow.bgFile}');`)
 			// select('.person-one').style(`background-image: url('./src/assets/${window.personOneAsset}');`)
 			// select('.person-two').style(`background-image: url('./src/assets/${window.personTwoAsset}');`)
 			// select('.frame-two').style(`background-image: url('./src/assets/${window.personTwoAsset}');`)
 			scrollingEnabled = false;
-			windowDescription.mouseOver(() => {console.log(window.currentPositionX)});
-			window.changeStateChecked();
+			// windowDescription.mouseOver(() => {console.log(window.currentPositionX)});
+			selectedWindow.changeStateChecked();
 		}
 	})
 	return false;
