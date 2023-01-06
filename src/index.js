@@ -17,6 +17,8 @@
 // import gsap from "gsap";
 // const gsap = require("./gsap");
 
+new p5();
+
 let houseAsset2;
 let houseAsset3;
 let houseAsset4;
@@ -137,57 +139,58 @@ class Cursor {
 
 let cursorInstance = new Cursor();
 
-class Firefly {
+  class Firefly {
 	constructor(x, y) {
-	  // Set the initial position of the firefly
-	  this.startX = x;
-	  this.startY = y;
-	  this.x = this.startX;
-	  this.y = this.startY;
-  
-	  // Set the radius of the firefly
+	  this.startPosition = createVector(x, y);
+	  this.position = createVector(x, y);
+	  this.velocity = createVector();
+	  this.target = createVector(random(x - 50, x + 50), random(y - 50, y + 50));
+	  this.acceleration = createVector();
+	  this.maxSpeed = 3;
+	  this.maxForce = 0.75;
 	  this.r = 1;
-  
-	  // Set the speed at which the firefly flies around
-	  this.speed = 2;
-  
-	  // Set the direction in which the firefly flies (in degrees)
-	  this.direction = 0;
 	}
   
-	move() {
-		// Update the direction of the firefly
-		this.direction += random(-30, 30);
-	
-		// Convert the direction to radians
-		let radians = this.direction * Math.PI / 180;
-
-		// Calculate the new position of the firefly based on its speed and direction
-		this.x += this.speed * Math.cos(radians);
-		this.y += this.speed * Math.sin(radians);
-	  
-		// Check if the firefly has gone too far from its initial position
-		let maxDistance = 50;
-		let distance = dist(this.x, this.y, this.startX, this.startY);
-		if (distance > maxDistance) {
-		  // If the firefly has gone too far, reverse its direction
-		  this.direction += random(5, 10);
-		}
+	update() {
+	  // Calculate the desired velocity
+	  let desired = p5.Vector.sub(this.target, this.position);
+	  desired.setMag(this.maxSpeed);
+  
+	  // Calculate the steering force
+	  let steer = p5.Vector.sub(desired, this.velocity);
+	  steer.limit(this.maxForce);
+  
+	  // Apply the steering force to the acceleration
+	  this.acceleration.add(steer);
+  
+	  // Update the velocity and position
+	  this.velocity.add(this.acceleration);
+	  this.velocity.limit(this.maxSpeed);
+	  this.position.add(this.velocity);
+	  this.acceleration.mult(0);
+  
+	  // Check if the firefly has reached its target
+	  if (dist(this.position.x, this.position.y, this.target.x, this.target.y) < 5) {
+		// If so, choose a new target within the specified zone
+		this.target = createVector(random(this.startPosition.x - 50, this.startPosition.x + 50), random(this.startPosition.y - 50, this.startPosition.y + 50));
+	  }
 	}
   
 	display() {
-		this.move();
-	  // Draw the firefly as a white circle
-	  drawingContext.shadowBlur = 6;
-	  drawingContext.shadowColor = 255;
-	  fill(255, 255, 255, 90);
-	  ellipse(this.x, this.y, this.r * 2, this.r * 2);
+		this.update();
+	  fill(255);
+	  circle(this.position.x, this.position.y, this.r);
 	}
   }
 
   let fireflies = [
-	new Firefly(806, 695),
+	new Firefly(60, 467),
+	new Firefly(108, 488),
+	new Firefly(48, 560),
+	new Firefly(378, 1556),
+	new Firefly(390, 1545),
 	new Firefly(850, 690),
+	new Firefly(843, 680),
 	new Firefly(844, 709),
 	new Firefly(1390, 901),
 	new Firefly(1358, 905),
@@ -356,19 +359,16 @@ class Map {
 		push();
 		
 		if (shouldCanvasScaleUp()) {
-			scale(window.innerWidth/mapAsset.width);
+			scale(canvasScaling());
 		}
 		translate(-cameraPositionX, -cameraPositionY);
 		image(this.currentMap, this.x, this.y);
 		this.windowArray.forEach(window => {
 			window.currentPositionX = window.positionX - cameraPositionX;
 			window.currentPositionY = window.positionY - cameraPositionY;
-			console.log(window.currentPositionX);
 			if (shouldCanvasScaleUp()) {
-				window.currentPositionX * (window.innerWidth/mapAsset.width);
-				window.currentPositionY * (window.innerWidth/mapAsset.width);
-				console.log(window.currentPositionX);
-				debugger;
+				window.currentPositionX *= (canvasScaling());
+				window.currentPositionY *= (canvasScaling());
 			}
 			window.draw();
 		})
@@ -409,12 +409,19 @@ let map = new Map({});
 function windowResized() {
 	resizeCanvas(window.innerWidth, window.innerHeight);
 	setHorizontalCameraBounds();
+
+	targetCameraPositionX = stayInBoundsX(targetCameraPositionX);
+	targetCameraPositionY = stayInBoundsY(targetCameraPositionY);
 	// if on smaller screen and portrait, don't use bg image 
 	// if (window.innerHeight > window.innerWidth*1.3 && window.innerWidth < 1000) {
 	//   background(10);
 	// } else {
 	//   image(img, -window.innerWidth/2, -window.innerHeight/2, window.innerWidth, window.innerHeight);
 	// }
+}
+
+function canvasScaling() {
+	return window.innerWidth/mapAsset.width;
 }
 
 function shouldCanvasScaleUp() {
@@ -424,6 +431,10 @@ function shouldCanvasScaleUp() {
 function setHorizontalCameraBounds() {
 	cameraBoundsRight = mapAsset.width - window.innerWidth;
 	cameraBoundsBottom = mapAsset.height - window.innerHeight;
+	if (shouldCanvasScaleUp()) {
+		cameraBoundsRight *= canvasScaling();
+		cameraBoundsBottom *= canvasScaling();
+	}
 }
 
 function isMouseHoveringOnInteractable() {
@@ -464,7 +475,7 @@ function mouseClicked() {
 			// select('.person-two').style(`background-image: url('./src/assets/${window.personTwoAsset}');`)
 			// select('.frame-two').style(`background-image: url('./src/assets/${window.personTwoAsset}');`)
 			scrollingEnabled = false;
-			// windowDescription.mouseOver(() => {console.log('hover')});
+			windowDescription.mouseOver(() => {console.log(window.currentPositionX)});
 			window.changeStateChecked();
 		}
 	})
