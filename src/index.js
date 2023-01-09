@@ -281,7 +281,7 @@ class Map {
 					positionY: 477,
 					asset: w1SeenAsset,
 					assetSeen: w1SeenAsset,
-					bgFile: 'wohnung-4.jpg',
+					bgFile: 'wohnung-5.jpg',
 					personOneAsset: 'person1.png',
 					story1: "Literature Teacher, 25",
 					story2: "",
@@ -294,6 +294,7 @@ class Map {
 					positionY: 595,
 					asset: w2HoverAsset,
 					assetSeen: w2SeenAsset,
+					bgFile: 'wohnung-4.jpg',
 					personOneAsset: 'person2.png',
 					story1: "Engineer, 35",
 					story2: "",
@@ -466,11 +467,16 @@ function mouseClicked() {
 			select('.first-text').html(selectedWindow.story1);
 			select('.second-text').html(selectedWindow.story2);
 			select('.third-text').html(selectedWindow.story3);
+			let descriptionPositionX = mouseX;
+			let descriptionPositionY = mouseY;
 			if (mouseX > (window.innerWidth * 0.6)) {
-				windowDescription.position(mouseX - (window.innerWidth * 0.45), mouseY);
-			} else {
-				windowDescription.position(mouseX, mouseY);
+				descriptionPositionX *= 0.45;
 			}
+			if (mouseY > (window.innerHeight * 0.6)) {
+				descriptionPositionY *= 0.45;
+			}
+			windowDescription.position(descriptionPositionX, descriptionPositionY);
+
 			windowDescription.class("window-description");
 			const bgColor = 'rgba(9,8,7,0.95)' 
 			const bgColorBottom = 'rgba(9,8,7,0.85)' 
