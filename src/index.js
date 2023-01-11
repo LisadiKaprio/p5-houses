@@ -68,6 +68,8 @@ function preload () {
 	w6SeenAsset = loadImage('src/assets/w6-seen.jpg');
 	w7HoverAsset = loadImage('src/assets/w7-hover.jpg');
 	w7SeenAsset = loadImage('src/assets/w7-seen.jpg');
+	w8HoverAsset = loadImage('src/assets/w8-hover.jpg');
+	w8SeenAsset = loadImage('src/assets/w8-seen.jpg');
 	selection1Asset = loadImage('src/assets/selection1.png');
 	selection2Asset = loadImage('src/assets/selection2.png');
 	selection3Asset = loadImage('src/assets/selection3.png');
@@ -259,7 +261,7 @@ class Window extends Interactable {
 		this.story1 = config.story1 || 'Person, 27.';
 		this.story2 = config.story2 || '';
 		this.story3 = config.story3 || 'Calm.';
-		this.bgFile = config.bgFile || 'wohnung-2.jpg';
+		this.bgFile = config.bgFile || 'wohnung-5.jpg';
 		this.personOneAsset = config.personOneAsset || 'person1.png';
 		this.personTwoAsset = config.personTwoAsset || '';
 	}
@@ -290,8 +292,8 @@ class Map {
 			this.window2 = new Window({
 					sizeX: w2HoverAsset.width,
 					sizeY: w2HoverAsset.height,
-					positionX: 1305,
-					positionY: 595,
+					positionX: 1366,
+					positionY: 626,
 					asset: w2HoverAsset,
 					assetSeen: w2SeenAsset,
 					bgFile: 'wohnung-4.jpg',
@@ -303,8 +305,8 @@ class Map {
 			this.window3 = new Window({
 					sizeX: w3HoverAsset.width,
 					sizeY: w3HoverAsset.height,
-					positionX: 1544,
-					positionY: 100,
+					positionX: 1601,
+					positionY: 126,
 					asset: w3HoverAsset,
 					assetSeen: w3SeenAsset,
 					personOneAsset: 'person3.png',
@@ -316,34 +318,43 @@ class Map {
 			this.window4 = new Window({
 					sizeX: w4HoverAsset.width,
 					sizeY: w4HoverAsset.height,
-					positionX: 141,
-					positionY: 1189,
+					positionX: 129,
+					positionY: 1183,
 					asset: w4HoverAsset,
 					assetSeen: w4SeenAsset,
 				}),
 			this.window5 = new Window({
 					sizeX: w5HoverAsset.width,
 					sizeY: w5HoverAsset.height,
-					positionX: 448,
-					positionY: 1344,
+					positionX: 414,
+					positionY: 1338,
 					asset: w5HoverAsset,
 					assetSeen: w5SeenAsset,
 				}),
 			this.window6 = new Window({
 					sizeX: w6HoverAsset.width,
 					sizeY: w6HoverAsset.height,
-					positionX: 1229,
-					positionY: 1415,
+					positionX: 1225,
+					positionY: 1442,
 					asset: w6HoverAsset,
 					assetSeen: w6SeenAsset,
 				}),
-			this.window7 = new Window({
-					sizeX: w7HoverAsset.width,
-					sizeY: w7HoverAsset.height,
-					positionX: 1870,
-					positionY: 1446,
-					asset: w7HoverAsset,
-					assetSeen: w7SeenAsset,
+				// fix position/asset first
+			// this.window7 = new Window({
+			// 		sizeX: w7HoverAsset.width,
+			// 		sizeY: w7HoverAsset.height,
+			// 		positionX: 1307,
+			// 		positionY: 1441,
+			// 		asset: w7HoverAsset,
+			// 		assetSeen: w7SeenAsset,
+			// 	}),
+			this.window8 = new Window({
+					sizeX: w8HoverAsset.width,
+					sizeY: w8HoverAsset.height,
+					positionX: 1868,
+					positionY: 1444,
+					asset: w8HoverAsset,
+					assetSeen: w8SeenAsset,
 				}),
 		]
 	}
