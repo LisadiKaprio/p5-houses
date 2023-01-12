@@ -23,6 +23,7 @@ let houseAsset2;
 let houseAsset3;
 let houseAsset4;
 let houseAsset5;
+let bombAsset;
 let mapAsset;
 let mapAssetChanged;
 let w1HoverAsset;
@@ -52,6 +53,7 @@ function preload () {
 	houseAsset3 = loadImage('src/assets/3.png');
 	houseAsset4 = loadImage('src/assets/4.png');
 	houseAsset5 = loadImage('src/assets/5.png');
+	bombAsset = loadImage('src/assets/bomb1.gif');
 	mapAsset = loadImage('src/assets/map-1.jpg');
 	mapAssetChanged = loadImage('src/assets/map-3.jpg');
 	w1HoverAsset = loadImage('src/assets/w1-hover.jpg');
@@ -108,8 +110,12 @@ let scrollDrag = 4;
 let targetCameraPositionX = 0;
 let targetCameraPositionY = 0;
 let difX = 0;
-let difY = 0;
+let difY = 0
 
+let stateBegin = 'stateBegin';
+let stateAlert = 'stateAlert';
+let stateDestruction = 'stateDestruction';
+let currentState = stateBegin;
 class Cursor {
 	constructor() {
 		this.radius = cursorRadius;
@@ -142,15 +148,19 @@ class Cursor {
 let cursorInstance = new Cursor();
 
   class Firefly {
-	constructor(x, y) {
+	constructor(x, y, r, color) {
 	  this.startPosition = createVector(x, y);
 	  this.position = createVector(x, y);
+
 	  this.velocity = createVector();
 	  this.target = createVector(random(x - 50, x + 50), random(y - 50, y + 50));
 	  this.acceleration = createVector();
 	  this.maxSpeed = 3;
 	  this.maxForce = 0.75;
-	  this.r = 1;
+	  this.maxDistance = 50;
+
+	  this.r = r;
+	this.color = color;
 	}
   
 	update() {
@@ -174,29 +184,159 @@ let cursorInstance = new Cursor();
 	  // Check if the firefly has reached its target
 	  if (dist(this.position.x, this.position.y, this.target.x, this.target.y) < 5) {
 		// If so, choose a new target within the specified zone
-		this.target = createVector(random(this.startPosition.x - 50, this.startPosition.x + 50), random(this.startPosition.y - 50, this.startPosition.y + 50));
+		this.target = createVector(random(this.startPosition.x - this.maxDistance, this.startPosition.x + this.maxDistance), random(this.startPosition.y - this.maxDistance, this.startPosition.y + this.maxDistance));
 	  }
 	}
   
 	display() {
 		this.update();
-	  fill(255);
+	  fill(this.color, this.color, this.color);
 	  circle(this.position.x, this.position.y, this.r);
 	}
   }
 
   let fireflies = [
-	new Firefly(60, 467),
-	new Firefly(108, 488),
-	new Firefly(48, 560),
-	new Firefly(378, 1556),
-	new Firefly(390, 1545),
-	new Firefly(850, 690),
-	new Firefly(843, 680),
-	new Firefly(844, 709),
-	new Firefly(1390, 901),
-	new Firefly(1358, 905),
+	new Firefly(60, 467, 1, 255),
+	new Firefly(108, 488, 1, 250),
+	new Firefly(48, 560, 1, 255),
+	new Firefly(378, 1556, 1, 253),
+	new Firefly(390, 1545, 1, 245),
+	new Firefly(850, 690, 1, 253),
+	new Firefly(843, 680, 1, 251),
+	new Firefly(844, 709, 1, 248),
+	new Firefly(1390, 901, 1, 254),
+	new Firefly(1358, 905, 1, 251),
   ]
+
+  let darkFireflies = [
+	new Firefly(60, 90, 2, 5),
+	new Firefly(180, 150, 2, 0),
+	new Firefly(150, 1666, 2, 5),
+	new Firefly(280, 1715, 2, 3),
+	new Firefly(18, 1744, 2, 5),
+	new Firefly(2080, 1740, 2, 3),
+	new Firefly(1971, 1589, 2, 1),
+	new Firefly(1980, 2001, 2, 8),
+	new Firefly(1955, 2021, 2, 1),
+  ]
+
+class Siren {
+	constructor(config) {
+		this.startx = config.startx ||  window.innerWidth / 2;
+		this.starty = config.starty || -30;
+		this.startRadiusOffset = config.startRadiusOffset || -30;
+		this.startRadiusi = config.startRadiusi || [30, 15, 0, -15, -30];
+		this.x = this.startx;
+		this.y = this.starty;
+		this.radiusOffset = this.startRadiusOffset;
+		this.radiusi = this.startRadiusi;
+		this.s = config.s || 100;
+		this.maxSize = config.maxSize || window.innerWidth / 2;
+		this.maxTransparency = config.maxSize || 255;
+		this.myColorR = config.myColorR || 9;
+		this.myColorG = config.myColorG || 8;
+		this.myColorB = config.myColorB || 7;
+		this.randomnessStep = config.randomnessStep || 5;
+	}
+	resetMe() {
+		this.x = this.startx;
+		this.y = this.starty;
+		this.radiusOffset = this.startRadiusOffset;
+		this.radiusi = this.startRadiusi;
+	}
+	draw() {
+		noFill();
+		if (frameCount % 150 == 0) {
+			this.resetMe();
+		}
+		for (let radius of this.radiusi) {
+		  radius += this.radiusOffset;
+		  if (radius < 0 || radius > this.maxSize) continue;
+		  let c = map(abs(this.s - radius), 0, this.s, this.maxTransparency, 0);
+		  stroke(this.myColorR, this.myColorG, this.myColorB, c);
+		  strokeWeight(5);
+		  ellipse(this.x + random(this.randomnessStep), this.y + random(this.randomnessStep), radius * 2, radius * 2);
+		}
+		this.radiusOffset += 2;
+	}
+}
+
+
+let siren = new Siren({});
+let sirenLeft = new Siren({startx: window.innerWidth / 6});
+let sirenRight = new Siren({ startx: window.innerWidth / 6 * 5});
+
+class Flash {
+	constructor(color, time, duration) {
+	  this.color = color;
+	  this.time = time;
+	  this.duration = duration;
+	  this.lifetime = 0;
+	  this.imageLifetime = 0;
+	  this.fadeLength = time * 0.5;
+	  this.enabled = false;
+
+	  this.imageSizeX = 100;
+	  this.imageSizeY = 100;
+	  this.imageX = ((window.innerWidth / 2) - (this.imageSizeX / 2));
+	  this.imageY = ((window.innerHeight / 2) - (this.imageSizeY / 2));
+	  this.renderedImage;
+	}
+
+	update() {
+	  this.lifetime += 1;
+	}
+  
+	draw() {
+		if(this.enabled) {
+			this.update();
+			let alpha;
+			let imageAlpha;
+			// when fully opaque
+			if (
+				this.lifetime > this.time &&
+				this.lifetime < this.duration + this.time
+			) {
+				alpha = 255;
+				imageAlpha = map(
+					abs(this.lifetime - this.time) * 0.05,
+					0,
+					this.time,
+					255,
+					0);
+				myMap.switchMapContentDestruction();
+			} 
+			// when getting opaque
+			else if (this.lifetime <= this.time) {
+				alpha = map(
+					abs(this.lifetime - this.time),
+					0, 
+					this.fadeLength, 
+					255, 
+					0);
+				imageAlpha = alpha;
+			} 
+			// when getting transparent again
+			else {
+				alpha = map(
+					abs(this.lifetime - (this.time + this.duration)),
+					0,
+					this.fadeLength,
+					255,
+					0);
+				imageAlpha = 0;
+			}
+			this.color.setAlpha(alpha);
+			fill(this.color);
+			rect(0, 0, window.innerWidth, window.innerHeight);
+			tint(255, imageAlpha);
+			image(bombAsset, this.imageX, this.imageY, this.imageSizeX, this.imageSizeY);
+		}
+	}
+}
+
+let flash = new Flash(color(248, 249, 250), 25, 250);
+
 class Interactable {
 	constructor(config) {
 		// super();
@@ -271,7 +411,6 @@ class Map {
 	constructor(config) {
 		this.x = config.x || 0; 
 		this.y = config.x || 0;
-		this.stateChanged = false;
 	}
 	setup() {
 		this.currentMap = mapAsset;
@@ -358,14 +497,40 @@ class Map {
 				}),
 		]
 	}
-	changeState() {
-		this.stateChanged = true;
+	changeState(state) {
+		if (state === stateDestruction) {
+			flash.enabled = true;
+		}
+		currentState = state;
+		if (state === stateAlert) {
+			eventWindowSeenAmount = 0;
+			this.windowArray.forEach(windowChild => {
+				windowChild.isSeen = false;
+				windowChild.story3 = 'scared.';
+			});
+			fireflies.forEach(fireflyChild => {
+				fireflyChild.maxSpeed = 9;
+				fireflyChild.maxForce = 4;
+				fireflyChild.maxDistance = 10;
+			})
+		}
+	}
+	switchMapContentDestruction() {
 		this.currentMap = mapAssetChanged;
-		this.windowArray = [];
+		eventWindowSeenAmount = 0;
+		this.windowArray.forEach(windowChild => {
+			windowChild.isSeen = false;
+			windowChild.story3 = 'scared.';
+		});
 	}
 	drawGradient(gradient) {
 		image(gradient, 0, 0);
 		gradient.resize(window.innerWidth,window.innerHeight);
+	}
+	drawFireflies(flyGroup) {
+		flyGroup.forEach(firefly => {
+			firefly.display();
+		});
 	}
 	draw() {
 		// draggable elements
@@ -386,9 +551,11 @@ class Map {
 			window.draw();
 		})
 
-		fireflies.forEach(firefly => {
-			firefly.display();
-		});
+		if (currentState !== stateDestruction) {
+			this.drawFireflies(fireflies);
+		} else if (currentState === stateDestruction) {
+			this.drawFireflies(darkFireflies);
+		}
 
 		pop();
 
@@ -399,7 +566,10 @@ class Map {
 		const ac = 4;
 		const ad = 6;
 		const ae = 7;
-		if (!this.stateChanged) {
+		if (currentState === stateDestruction) {
+			flash.draw();
+		}
+		if (currentState !== stateDestruction) {
 			if (eventWindowSeenAmount >= aa && eventWindowSeenAmount <= ab) {
 				this.drawGradient(gradient1);
 			} else if (eventWindowSeenAmount >= (ab+1) && eventWindowSeenAmount <= ac) {
@@ -412,11 +582,17 @@ class Map {
 				this.drawGradient(gradient4);
 			}
 		}
+
+		if(currentState === stateAlert) {
+			siren.draw();
+			sirenLeft.draw();
+			sirenRight.draw();
+		}
 		pop();
 	}
 }
 
-let map = new Map({});
+let myMap = new Map({});
 
 // to make it responsive
 function windowResized() {
@@ -425,6 +601,10 @@ function windowResized() {
 
 	targetCameraPositionX = stayInBoundsX(targetCameraPositionX);
 	targetCameraPositionY = stayInBoundsY(targetCameraPositionY);
+
+	siren.startx = window.innerWidth / 2;
+	sirenLeft.startx = window.innerWidth / 6;
+	sirenRight.startx = window.innerWidth / 6 * 5;
 	// if on smaller screen and portrait, don't use bg image 
 	// if (window.innerHeight > window.innerWidth*1.3 && window.innerWidth < 1000) {
 	//   background(10);
@@ -451,7 +631,7 @@ function setHorizontalCameraBounds() {
 }
 
 function isMouseHoveringOnInteractable() {
-	return map.windowArray.some(obj => {
+	return myMap.windowArray.some(obj => {
 		return obj.isHoveredOver;
 	  });
 }
@@ -462,11 +642,13 @@ function mouseClicked() {
 		windowDescription.class("window-description-hidden");
 		scrollingEnabled = true;
 
-		if (eventWindowSeenAmount >= eventWindowNeededAmount ) {
-			map.changeState();
+		if (eventWindowSeenAmount >= 1/*eventWindowNeededAmount*/ && currentState === stateBegin) {
+			myMap.changeState(stateAlert);
+		} else if (eventWindowSeenAmount >= 1/*(eventWindowNeededAmount/2)*/ && currentState === stateAlert) {
+			myMap.changeState(stateDestruction);
 		}
 	}
-	map.windowArray.forEach(selectedWindow => {
+	myMap.windowArray.forEach(selectedWindow => {
 		if(selectedWindow.isHoveredOver) {
 			gsap.from('.stagger-animation', {
 			  duration: 1,
@@ -565,9 +747,9 @@ function setup() {
 
 	windowDescription = select('.window-description-hidden');
 
-	map.setup();
+	myMap.setup();
 
-	eventWindowNeededAmount = map.windowArray.length;
+	eventWindowNeededAmount = myMap.windowArray.length;
 }
 
 function draw() {
@@ -580,7 +762,7 @@ function draw() {
 	cameraPositionY = stayInBoundsY(cameraPositionY);
 	//
 
-	map.draw();
+	myMap.draw();
 
 	cursorInstance.display();
 }

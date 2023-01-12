@@ -106,3 +106,33 @@ body {
   height: 200px;
   background-size: cover;
 }
+
+.scroll-alert {
+  /* position: absolute;
+  bottom: 0px;
+  left: 0px; */
+  height: 20px; 
+  line-height: 20px; 
+}
+
+.scroll-text {
+  color: rgba(255,255,255,0.5);
+  text-shadow: 0px 0px 1px rgba(255,255,255,0.15);
+  position: absolute;
+  padding: 0 10px;
+  min-width: 100%;
+  animation: init 5s linear, back 10s linear 5s infinite;
+}
+
+.dupl {
+  display: block; 
+  animation: back 10s linear 0s infinite;
+}
+
+@keyframes back {
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
+}
+@keyframes init {
+  to { transform: translateX(-100%); }
+}
