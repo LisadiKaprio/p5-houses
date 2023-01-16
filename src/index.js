@@ -136,8 +136,14 @@ class Cursor {
 
 		fill(0, 0, 0, 0);
 		stroke(255, 255, 255, 50);
-		strokeWeight(this.strokeWeight);
-		circle(mouseX, mouseY, this.radius+10);
+
+		if(currentState === stateAlert || currentState === stateDestruction){
+			strokeWeight(random(this.strokeWeight- 0.5, this.strokeWeight + 0.5));
+			circle(mouseX + random(-1, 1), mouseY + random(-1, 1), this.radius+10);
+		} else {
+			strokeWeight(this.strokeWeight);
+			circle(mouseX, mouseY, this.radius+10);
+		}
 
 		if (this.currentImage) {
 			image(this.currentImage, mouseX, mouseY, this.radius+5, this.radius+5);
@@ -236,7 +242,9 @@ class Siren {
 		this.myColorR = config.myColorR || 9;
 		this.myColorG = config.myColorG || 8;
 		this.myColorB = config.myColorB || 7;
-		this.randomnessStep = config.randomnessStep || 5;
+		this.randomnessStep = config.randomnessStep || 1;
+
+		this.frames = 0;
 	}
 	resetMe() {
 		this.x = this.startx;
@@ -245,8 +253,9 @@ class Siren {
 		this.radiusi = this.startRadiusi;
 	}
 	draw() {
+		this.frames += 1;
 		noFill();
-		if (frameCount % 150 == 0) {
+		if (this.frames % 150 == 0) {
 			this.resetMe();
 		}
 		for (let radius of this.radiusi) {
@@ -273,7 +282,8 @@ class Flash {
 	  this.duration = duration;
 	  this.lifetime = 0;
 	  this.imageLifetime = 0;
-	  this.fadeLength = time * 0.5;
+	  this.fadeLengthOut = time * 2;
+	  this.fadeLength = time * 0.75;
 	  this.enabled = false;
 
 	  this.imageSizeX = 100;
@@ -311,7 +321,7 @@ class Flash {
 				alpha = map(
 					abs(this.lifetime - this.time),
 					0, 
-					this.fadeLength, 
+					this.fadeLengthOut, 
 					255, 
 					0);
 				imageAlpha = alpha;
@@ -335,7 +345,56 @@ class Flash {
 	}
 }
 
-let flash = new Flash(color(248, 249, 250), 25, 250);
+let flash = new Flash(color(248, 249, 250), 25, 175);
+
+class ScrollingText {
+	constructor(text, y) {
+	  this.text = text;
+	  this.textWidth = textWidth(this.text);
+	  this.startX = 0;
+	  this.x = this.startX;
+	  // this.startXClone = this.x+this.textWidth;
+	  this.xClone = window.innerWidth;
+	  this.moveX = true;
+	  this.moveXClone = false;
+	  this.textSize = 20;
+	  this.y = y;
+	}
+   
+	display() {
+		noStroke();
+		textSize(this.textSize);
+		textStyle(BOLD);
+	  fill(200);
+	  text(this.text, this.x, this.y - this.textSize);
+	  fill(170);
+	  text(this.text, this.xClone, this.y - this.textSize);
+	  
+	  if(this.moveX) {
+		this.x -= 1;
+	  }
+	  if(this.moveXClone) {
+		this.xClone -= 1;
+	  }
+	  
+	  // if the right edge of line is visible,
+	  // then start moving clone line
+	  if (this.x + textWidth(this.text) < window.innerWidth) this.moveXClone = true;
+	  if (this.xClone + textWidth(this.text) < window.innerWidth) this.moveX = true;
+	  
+	  // if any line no longer visible, it teleports to very right
+	  if (this.x < this.startX-textWidth(this.text)) {
+		this.x = window.innerWidth;
+		this.moveX = false;
+	  }
+	  if (this.xClone < this.startX-textWidth(this.text)) {
+		this.xClone = window.innerWidth;
+		this.moveXClone = false;
+	  }
+	}
+  }
+
+let scrollingText;
 
 class Interactable {
 	constructor(config) {
@@ -426,7 +485,7 @@ class Map {
 					personOneAsset: 'person1.png',
 					story1: "Literature Teacher, 25",
 					story2: "",
-					story3: "She had a late night grading papers and preparing lessons for her third grade class, and is having a hard time waking up. She hits the snooze button a few times before dragging herself out of bed and into the shower. As she gets dressed, she thinks about the pile of papers on her desk that still need to be graded and sighs. She makes herself a cup of coffee and a slice of toast before sitting down at the kitchen table to check her email and plan out her day. She has a meeting with the principal at 9:30, followed by back-to-back classes all day. She remembers that she also promised to help out with the school's bake sale on Friday and groans at the thought of having to come up with something to bake. As she finishes her breakfast, she reminds herself that she loves her job and that it's all worth it in the end."
+					story3: "She had a late night grading papers and preparing lessons for her third grade class, and is having a hard time waking up. She hits the snooze button a few times before dragging herself out of bed and into the shower.<br><br>As she gets dressed, she thinks about the pile of papers on her desk that still need to be graded and sighs. She makes herself a cup of coffee and a slice of toast before sitting down at the kitchen table to check her email and plan out her day. She has a meeting with the principal at 9:30, followed by back-to-back classes all day. She remembers that she also promised to help out with the school's bake sale on Friday and groans at the thought of having to come up with something to bake.<br><br>As she finishes her breakfast, she reminds herself that she loves her job and that it's all worth it in the end."
 				}),
 			this.window2 = new Window({
 					sizeX: w2HoverAsset.width,
@@ -437,9 +496,9 @@ class Map {
 					assetSeen: w2SeenAsset,
 					bgFile: 'wohnung-4.jpg',
 					personOneAsset: 'person2.png',
-					story1: "Engineer, 35",
-					story2: "",
-					story3: "He had a great time out with friends last night and is in a good mood. He gets out of bed and stretches before heading to the kitchen to start his morning routine. He puts on a pot of coffee and goes for a quick jog around the neighborhood to clear his head. When he gets back, he takes a shower and gets dressed for work, feeling refreshed and ready to take on the day. As he packs his lunch and gathers his things, he hums a tune to himself happily. Later in the day, he has a meeting with his boss to discuss a potential promotion to director of engineering, which has him feeling a bit anxious but also excited. He's been working hard and feels ready for the next step in his career. He just hopes that he can nail the meeting and impress his boss. As he heads out the door, he reminds himself to stay calm and confident."
+					story1: "A married couple, their small baby son, and the wife's mom",
+					story2: " ",
+					story3: "Everyone is awake and getting ready for the day. The wife is in the kitchen preparing breakfast for her mom and the baby, while the husband is out at the shop running errands.<br><br>The wife's mom is sitting at the kitchen table, sipping her coffee and chatting with her daughter about her upcoming 60th birthday. They're discussing plans for a small family gathering to celebrate the occasion. The baby is in his crib, cooing and playing with his toys.<br><br>The young mom is making some pancakes with groundbeef stuffing. She's feeling a bit tired but happy to be starting the day with her loved ones, especially her mom, who came to visit, take care of the newborn baby and celebrate her birthday all the way here from her home village.<br><br>As she cooks, she can't help feeling a bit overwhelmed with the planning, but also excited to celebrate such a special occasion with her family. She and her mom are discussing the details of the party, such as the guest list, menu, and decorations. They're excited, as they'll finally get a visit from the parents and family of baby's father. This will be the first time for them to see their grandson in person, not just on photos.<br><br>The wife's mom plans to spend this upcoming day relaxing and catching up on some reading, while the wife will spend her day doing household chores, running errands, and taking care of the baby. The husband will leave again right after he comes back home, this time to go to work."
 				}),
 			this.window3 = new Window({
 					sizeX: w3HoverAsset.width,
@@ -587,6 +646,7 @@ class Map {
 			siren.draw();
 			sirenLeft.draw();
 			sirenRight.draw();
+			scrollingText.display();
 		}
 		pop();
 	}
@@ -605,6 +665,8 @@ function windowResized() {
 	siren.startx = window.innerWidth / 2;
 	sirenLeft.startx = window.innerWidth / 6;
 	sirenRight.startx = window.innerWidth / 6 * 5;
+
+	scrollingText.y = window.innerHeight;
 	// if on smaller screen and portrait, don't use bg image 
 	// if (window.innerHeight > window.innerWidth*1.3 && window.innerWidth < 1000) {
 	//   background(10);
@@ -642,9 +704,9 @@ function mouseClicked() {
 		windowDescription.class("window-description-hidden");
 		scrollingEnabled = true;
 
-		if (eventWindowSeenAmount >= 1/*eventWindowNeededAmount*/ && currentState === stateBegin) {
+		if (eventWindowSeenAmount >= 3/*eventWindowNeededAmount*/ && currentState === stateBegin) {
 			myMap.changeState(stateAlert);
-		} else if (eventWindowSeenAmount >= 1/*(eventWindowNeededAmount/2)*/ && currentState === stateAlert) {
+		} else if (eventWindowSeenAmount >= 2/*(eventWindowNeededAmount/2)*/ && currentState === stateAlert) {
 			myMap.changeState(stateDestruction);
 		}
 	}
@@ -727,6 +789,8 @@ function stayInBoundsY(inputValueY) {
 
 function setup() {
 	frameRate(30);
+	scrollingText = new ScrollingText("Citizens, air alert! Air alert! Air alert! Turn off the light, gas, put out the fire in the stoves. Take personal protective equipment, documents, food and water supplies. Warn the neighbors and help the sick and elderly people to go outside. As soon as possible, get to the protective structure or hide in the area. Keep calm and order. Next, listen carefully to the announcement of the Department of Civil Protection of the regional state administration. ... ... ", window.innerHeight);
+
 	wholeCanvas = createCanvas(window.innerWidth, window.innerHeight);
 	// check if mouse in inside
 	wholeCanvas.mouseOver(() => { isMouseOnCanvas = true});
