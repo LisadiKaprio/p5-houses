@@ -2,11 +2,13 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
 
+@import url('https://fonts.googleapis.com/css2?family=Abel&display=swap');
+
 html,
 body {
   /* font-family: 'Patrick Hand', cursive; */
 
-  font-family: 'Indie Flower', cursive;
+  font-family: 'Abel', sans-serif;
 
   margin: 0;
   padding: 0;
@@ -27,7 +29,7 @@ body {
   line-height: 175%;
   /* font-weight: 600; */
   width: 35%;
-  max-height: 35%;
+  max-height: 450px;
   color: rgba(255,255,255,0.5);
   text-shadow: 0px 0px 1px rgba(255,255,255,0.15);
 
@@ -36,10 +38,9 @@ body {
   box-shadow: 0px 0px 5px rgba(116, 87, 72,100); */
   border: 3px solid rgb(9,8,7);
   box-shadow: 0px 0px 5px rgba(9,8,7);
-
-  padding: 5%;
   /* padding-top: 48px;
   padding-bottom: 48px; */
+  padding: 24px;
 
   background-color: #a295b5;
   background-size: cover;
@@ -58,12 +59,16 @@ body {
   
 .description-section {
   height: 100%;
+  background-image: linear-gradient(0deg, rgba(9,8,7,0.95), rgba(9,8,7,0.85));
+  border-radius: 8px;
+  padding: 12px;
+  max-height: 350px;
 }
 
 .third-text {
   margin-top: 12px;
-  max-height: 100%;
-  overflow-y: auto;
+  max-height: 250px;
+  overflow-y: scroll;
   
   padding-right: 25px;
 }
@@ -97,15 +102,19 @@ body {
 }
 
 .person-container {
-  align-self: flex-end;
+  transform: translateY(calc(-150px - 12px));
+  position: absolute;
+  align-self: flex-start;
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
 }
 
 .person-container .person {
-  width: 200px;
-  height: 200px;
-  background-size: cover;
+  width: 75px;
+  height: 150px;
+  background-size:contain;
+  background-position: bottom center;
+  background-repeat: no-repeat;
 }
 
 /* .scroll-alert {

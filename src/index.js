@@ -463,6 +463,7 @@ class Window extends Interactable {
 		this.bgFile = config.bgFile || 'wohnung-5.jpg';
 		this.personOneAsset = config.personOneAsset || 'person1.png';
 		this.personTwoAsset = config.personTwoAsset || '';
+		this.personThreeAsset = config.personThreeAsset || '';
 	}
 }
 
@@ -482,10 +483,9 @@ class Map {
 					asset: w1SeenAsset,
 					assetSeen: w1SeenAsset,
 					bgFile: 'wohnung-5.jpg',
-					personOneAsset: 'person1.png',
-					story1: "Literature Teacher, 25",
-					story2: "",
-					story3: "She had a late night grading papers and preparing lessons for her third grade class, and is having a hard time waking up. She hits the snooze button a few times before dragging herself out of bed and into the shower.<br><br>As she gets dressed, she thinks about the pile of papers on her desk that still need to be graded and sighs. She makes herself a cup of coffee and a slice of toast before sitting down at the kitchen table to check her email and plan out her day. She has a meeting with the principal at 9:30, followed by back-to-back classes all day. She remembers that she also promised to help out with the school's bake sale on Friday and groans at the thought of having to come up with something to bake.<br><br>As she finishes her breakfast, she reminds herself that she loves her job and that it's all worth it in the end."
+					personOneAsset: 'Aa1.png',
+					personTwoAsset: 'Ab1.png',
+					story3: storyA1en
 				}),
 			this.window2 = new Window({
 					sizeX: w2HoverAsset.width,
@@ -495,10 +495,10 @@ class Map {
 					asset: w2HoverAsset,
 					assetSeen: w2SeenAsset,
 					bgFile: 'wohnung-4.jpg',
-					personOneAsset: 'person2.png',
-					story1: "A married couple, their small baby son, and the wife's mom",
-					story2: " ",
-					story3: "Everyone is awake and getting ready for the day. The wife is in the kitchen preparing breakfast for her mom and the baby, while the husband is out at the shop running errands.<br><br>The wife's mom is sitting at the kitchen table, sipping her coffee and chatting with her daughter about her upcoming 60th birthday. They're discussing plans for a small family gathering to celebrate the occasion. The baby is in his crib, cooing and playing with his toys.<br><br>The young mom is making some pancakes with groundbeef stuffing. She's feeling a bit tired but happy to be starting the day with her loved ones, especially her mom, who came to visit, take care of the newborn baby and celebrate her birthday all the way here from her home village.<br><br>As she cooks, she can't help feeling a bit overwhelmed with the planning, but also excited to celebrate such a special occasion with her family. She and her mom are discussing the details of the party, such as the guest list, menu, and decorations. They're excited, as they'll finally get a visit from the parents and family of baby's father. This will be the first time for them to see their grandson in person, not just on photos.<br><br>The wife's mom plans to spend this upcoming day relaxing and catching up on some reading, while the wife will spend her day doing household chores, running errands, and taking care of the baby. The husband will leave again right after he comes back home, this time to go to work."
+					personOneAsset: 'Ba1.png',
+					personTwoAsset: 'Bb1.png',
+					personThreeAsset: 'Bc1.png',
+					story3: storyB1en
 				}),
 			this.window3 = new Window({
 					sizeX: w3HoverAsset.width,
@@ -507,11 +507,11 @@ class Map {
 					positionY: 126,
 					asset: w3HoverAsset,
 					assetSeen: w3SeenAsset,
-					personOneAsset: 'person3.png',
-					personTwoAsset: 'person4.png',
+					personOneAsset: 'Ca1.png',
+					personTwoAsset: 'Cb1.png',
 					story1: "Nurse, 35",
 					story2: "",
-					story3: "She had a long and stressful shift at the hospital yesterday and is having a hard time shaking off the fatigue. She gets out of bed and stretches before heading to the kitchen to start her morning routine. She puts on a pot of coffee and sits down at the kitchen table to have a cup of tea and think about her day. She thinks about her teenage daughter who is struggling in school and wonders how she can help her. She knows that her daughter is feeling overwhelmed and stressed, and Sara wishes she could take some of that burden off her shoulders. Sara remembers that she promised to attend a parent-teacher conference later in the week and makes a mental note to clear her schedule for that. Later in the week, Sara has a doctor's appointment to discuss some nagging health concerns, which has her feeling a bit worried. She's been having some stomach issues and fatigue, and is hoping that the doctor can help her figure out what's going on. As she finishes her tea and gets ready to head out the door, she reminds herself to stay positive and take care of herself."
+					story3: storyC1en
 				}),
 			this.window4 = new Window({
 					sizeX: w4HoverAsset.width,
@@ -520,6 +520,8 @@ class Map {
 					positionY: 1183,
 					asset: w4HoverAsset,
 					assetSeen: w4SeenAsset,
+					personOneAsset: 'Da1.png',
+					story3: storyD1en
 				}),
 			this.window5 = new Window({
 					sizeX: w5HoverAsset.width,
@@ -528,15 +530,17 @@ class Map {
 					positionY: 1338,
 					asset: w5HoverAsset,
 					assetSeen: w5SeenAsset,
+					personOneAsset: 'Ea1.png',
+					story3: storyE1en
 				}),
-			this.window6 = new Window({
-					sizeX: w6HoverAsset.width,
-					sizeY: w6HoverAsset.height,
-					positionX: 1225,
-					positionY: 1442,
-					asset: w6HoverAsset,
-					assetSeen: w6SeenAsset,
-				}),
+			// this.window6 = new Window({
+			// 		sizeX: w6HoverAsset.width,
+			// 		sizeY: w6HoverAsset.height,
+			// 		positionX: 1225,
+			// 		positionY: 1442,
+			// 		asset: w6HoverAsset,
+			// 		assetSeen: w6SeenAsset,
+			// 	}),
 				// fix position/asset first
 			// this.window7 = new Window({
 			// 		sizeX: w7HoverAsset.width,
@@ -546,14 +550,14 @@ class Map {
 			// 		asset: w7HoverAsset,
 			// 		assetSeen: w7SeenAsset,
 			// 	}),
-			this.window8 = new Window({
-					sizeX: w8HoverAsset.width,
-					sizeY: w8HoverAsset.height,
-					positionX: 1868,
-					positionY: 1444,
-					asset: w8HoverAsset,
-					assetSeen: w8SeenAsset,
-				}),
+			// this.window8 = new Window({
+			// 		sizeX: w8HoverAsset.width,
+			// 		sizeY: w8HoverAsset.height,
+			// 		positionX: 1868,
+			// 		positionY: 1444,
+			// 		asset: w8HoverAsset,
+			// 		assetSeen: w8SeenAsset,
+			// 	}),
 		]
 	}
 	changeState(state) {
@@ -565,8 +569,21 @@ class Map {
 			eventWindowSeenAmount = 0;
 			this.windowArray.forEach(windowChild => {
 				windowChild.isSeen = false;
-				windowChild.story3 = 'scared.';
 			});
+			this.window1.story3 = storyA2en;
+			this.window2.story3 = storyB2en;
+			this.window3.story3 = storyC2en;
+			this.window4.story3 = storyD2en;
+			this.window5.story3 = storyE2en;
+			this.window1.personOneAsset = 'Aa2.png';
+			this.window1.personTwoAsset = 'Ab2.png';
+			this.window2.personOneAsset = 'Ba2.png';
+			this.window2.personTwoAsset = 'Bb2.png';
+			this.window2.personThreeAsset = 'Bc2.png';
+			this.window3.personOneAsset = 'Ca2.png';
+			this.window3.personTwoAsset = 'Cb2.png';
+			this.window4.personOneAsset = 'Da2.png';
+			this.window5.personOneAsset = 'Ea2.png';
 			fireflies.forEach(fireflyChild => {
 				fireflyChild.maxSpeed = 9;
 				fireflyChild.maxForce = 4;
@@ -579,8 +596,21 @@ class Map {
 		eventWindowSeenAmount = 0;
 		this.windowArray.forEach(windowChild => {
 			windowChild.isSeen = false;
-			windowChild.story3 = 'scared.';
 		});
+		this.window1.story3 = storyA3en;
+		this.window2.story3 = storyB3en;
+		this.window3.story3 = storyC3en;
+		this.window4.story3 = storyD3en;
+		this.window5.story3 = storyE3en;
+		this.window1.personOneAsset = 'Aa3.png';
+		this.window1.personTwoAsset = 'Ab3.png';
+		this.window2.personOneAsset = 'Ba3.png';
+		this.window2.personTwoAsset = 'Bb3.png';
+		this.window2.personThreeAsset = 'Bc3.png';
+		this.window3.personOneAsset = 'Ca3.png';
+		this.window3.personTwoAsset = 'Cb3.png';
+		this.window4.personOneAsset = 'Da3.png';
+		this.window5.personOneAsset = 'Ea3.png';
 	}
 	drawGradient(gradient) {
 		image(gradient, 0, 0);
@@ -719,8 +749,8 @@ function mouseClicked() {
 			  ease: 'power4',
 			  stagger: 0.1
 			});
-			select('.first-text').html(selectedWindow.story1);
-			select('.second-text').html(selectedWindow.story2);
+			// select('.first-text').html(selectedWindow.story1);
+			// select('.second-text').html(selectedWindow.story2);
 			select('.third-text').html(selectedWindow.story3);
 			let descriptionPositionX = mouseX;
 			let descriptionPositionY = mouseY;
@@ -733,15 +763,17 @@ function mouseClicked() {
 			windowDescription.position(descriptionPositionX, descriptionPositionY);
 
 			windowDescription.class("window-description");
-			const bgColor = 'rgba(9,8,7,0.95)' 
-			const bgColorBottom = 'rgba(9,8,7,0.85)' 
-			windowDescription.style(`background-image: linear-gradient(0deg, ${bgColorBottom}, ${bgColor}), url('./src/assets/${selectedWindow.bgFile}');`)
-			// select('.person-one').style(`background-image: url('./src/assets/${window.personOneAsset}');`)
-			// select('.person-two').style(`background-image: url('./src/assets/${window.personTwoAsset}');`)
-			// select('.frame-two').style(`background-image: url('./src/assets/${window.personTwoAsset}');`)
+			// const bgColor = 'rgba(9,8,7,0.95)' 
+			// const bgColorBottom = 'rgba(9,8,7,0.85)' 
+			windowDescription.style(`background-image: url('./src/assets/${selectedWindow.bgFile}');`)
+			// select('.person-one').style(`background-image: url('./src/assets/${selectedWindow.personOneAsset}');`)
+			// select('.person-two').style(`background-image: url('./src/assets/${selectedWindow.personTwoAsset}');`)
+			// select('.person-three').style(`background-image: url('./src/assets/${selectedWindow.personThreeAsset}');`)
+			// select('.frame-two').style(`background-image: url('./src/assets/${selectedWindow.personTwoAsset}');`)
 			scrollingEnabled = false;
-			// windowDescription.mouseOver(() => {console.log(window.currentPositionX)});
+			// windowDescription.mouseOver(() => {console.log(selectedWindow.currentPositionX)});
 			selectedWindow.changeStateChecked();
+			select('.third-text').elt.scrollTop = 0;
 		}
 	})
 	return false;
