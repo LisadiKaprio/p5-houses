@@ -28,15 +28,15 @@ body {
   font-size: 20px;
   line-height: 175%;
   /* font-weight: 600; */
-  width: 35%;
-  max-height: 450px;
+  width: calc(643px - 48px);
+  height: calc(450px - 48px);
   color: rgba(255,255,255,0.5);
   text-shadow: 0px 0px 1px rgba(255,255,255,0.15);
 
   border-radius: 8px;
   /* border: 3px solid rgb(116, 87, 72);
   box-shadow: 0px 0px 5px rgba(116, 87, 72,100); */
-  border: 3px solid rgb(9,8,7);
+  border: 7px solid rgb(9,8,7);
   box-shadow: 0px 0px 5px rgba(9,8,7);
   /* padding-top: 48px;
   padding-bottom: 48px; */
@@ -51,6 +51,8 @@ body {
   flex-direction: column;
   align-content: flex-start;
   justify-content: flex-start;
+
+  position: relative;
   /* border: 3px solid #99A083; */
   /* color: #785D41; */
   /* box-shadow: 3px 3px 5px #785e4175; */
@@ -59,15 +61,15 @@ body {
   
 .description-section {
   height: 100%;
-  background-image: linear-gradient(0deg, rgba(9,8,7,0.95), rgba(9,8,7,0.85));
+  /* background-image: linear-gradient(0deg, rgba(9,8,7,0.95), rgba(9,8,7,0.85)); */
   border-radius: 8px;
   padding: 12px;
-  max-height: 350px;
+  max-height: 90%;
 }
 
 .third-text {
   margin-top: 12px;
-  max-height: 250px;
+  max-height: 90%;
   overflow-y: scroll;
   
   padding-right: 25px;
@@ -115,6 +117,34 @@ body {
   background-size:contain;
   background-position: bottom center;
   background-repeat: no-repeat;
+}
+
+.bg-scene {
+  border-radius: 8px;
+  position: absolute;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: scale(1.01);
+  background-size:contain;
+  background-position: bottom center;
+  background-repeat: no-repeat;
+}
+
+@keyframes shake {
+  0% { transform: scale(1.01) translate(1px, 1px); }
+  10% { transform: scale(1.01) translate(-1px, -2px); }
+  20% { transform: scale(1.01) translate(-3px, 0px); }
+  30% { transform: scale(1.01) translate(3px, 2px); }
+  40% { transform: scale(1.01) translate(1px, -1px); }
+  50% { transform: scale(1.01) translate(-1px, 2px); }
+  60% { transform: scale(1.01) translate(-3px, 1px); }
+  70% { transform: scale(1.01) translate(3px, 1px); }
+  80% { transform: scale(1.01) translate(-1px, -1px); }
+  90% { transform: scale(1.01) translate(1px, 2px); }
+  100% { transform: scale(1.01) translate(1px, -2px); }
 }
 
 /* .scroll-alert {

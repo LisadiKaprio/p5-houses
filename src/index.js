@@ -461,9 +461,7 @@ class Window extends Interactable {
 		this.story2 = config.story2 || '';
 		this.story3 = config.story3 || 'Calm.';
 		this.bgFile = config.bgFile || 'wohnung-5.jpg';
-		this.personOneAsset = config.personOneAsset || 'person1.png';
-		this.personTwoAsset = config.personTwoAsset || '';
-		this.personThreeAsset = config.personThreeAsset || '';
+		this.sceneAsset = config.sceneAsset || 'A1.png';
 	}
 }
 
@@ -483,8 +481,7 @@ class Map {
 					asset: w1SeenAsset,
 					assetSeen: w1SeenAsset,
 					bgFile: 'wohnung-5.jpg',
-					personOneAsset: 'Aa1.png',
-					personTwoAsset: 'Ab1.png',
+					sceneAsset: 'A1.png',
 					story3: storyA1en
 				}),
 			this.window2 = new Window({
@@ -495,9 +492,7 @@ class Map {
 					asset: w2HoverAsset,
 					assetSeen: w2SeenAsset,
 					bgFile: 'wohnung-4.jpg',
-					personOneAsset: 'Ba1.png',
-					personTwoAsset: 'Bb1.png',
-					personThreeAsset: 'Bc1.png',
+					sceneAsset: 'B1.png',
 					story3: storyB1en
 				}),
 			this.window3 = new Window({
@@ -507,10 +502,7 @@ class Map {
 					positionY: 126,
 					asset: w3HoverAsset,
 					assetSeen: w3SeenAsset,
-					personOneAsset: 'Ca1.png',
-					personTwoAsset: 'Cb1.png',
-					story1: "Nurse, 35",
-					story2: "",
+					sceneAsset: 'C1.png',
 					story3: storyC1en
 				}),
 			this.window4 = new Window({
@@ -520,7 +512,7 @@ class Map {
 					positionY: 1183,
 					asset: w4HoverAsset,
 					assetSeen: w4SeenAsset,
-					personOneAsset: 'Da1.png',
+					sceneAsset: 'D1.png',
 					story3: storyD1en
 				}),
 			this.window5 = new Window({
@@ -530,7 +522,7 @@ class Map {
 					positionY: 1338,
 					asset: w5HoverAsset,
 					assetSeen: w5SeenAsset,
-					personOneAsset: 'Ea1.png',
+					sceneAsset: 'E1.png',
 					story3: storyE1en
 				}),
 			// this.window6 = new Window({
@@ -575,15 +567,11 @@ class Map {
 			this.window3.story3 = storyC2en;
 			this.window4.story3 = storyD2en;
 			this.window5.story3 = storyE2en;
-			this.window1.personOneAsset = 'Aa2.png';
-			this.window1.personTwoAsset = 'Ab2.png';
-			this.window2.personOneAsset = 'Ba2.png';
-			this.window2.personTwoAsset = 'Bb2.png';
-			this.window2.personThreeAsset = 'Bc2.png';
-			this.window3.personOneAsset = 'Ca2.png';
-			this.window3.personTwoAsset = 'Cb2.png';
-			this.window4.personOneAsset = 'Da2.png';
-			this.window5.personOneAsset = 'Ea2.png';
+			this.window1.sceneAsset = 'A2.png';
+			this.window2.sceneAsset = 'B2.png';
+			this.window3.sceneAsset = 'C2.png';
+			this.window4.sceneAsset = 'D2.png';
+			this.window5.sceneAsset = 'E2.png';
 			fireflies.forEach(fireflyChild => {
 				fireflyChild.maxSpeed = 9;
 				fireflyChild.maxForce = 4;
@@ -602,15 +590,11 @@ class Map {
 		this.window3.story3 = storyC3en;
 		this.window4.story3 = storyD3en;
 		this.window5.story3 = storyE3en;
-		this.window1.personOneAsset = 'Aa3.png';
-		this.window1.personTwoAsset = 'Ab3.png';
-		this.window2.personOneAsset = 'Ba3.png';
-		this.window2.personTwoAsset = 'Bb3.png';
-		this.window2.personThreeAsset = 'Bc3.png';
-		this.window3.personOneAsset = 'Ca3.png';
-		this.window3.personTwoAsset = 'Cb3.png';
-		this.window4.personOneAsset = 'Da3.png';
-		this.window5.personOneAsset = 'Ea3.png';
+		this.window1.sceneAsset = 'A3.png';
+		this.window2.sceneAsset = 'B3.png';
+		this.window3.sceneAsset = '';
+		this.window4.sceneAsset = '';
+		this.window5.sceneAsset = 'E3.png';
 	}
 	drawGradient(gradient) {
 		image(gradient, 0, 0);
@@ -765,7 +749,18 @@ function mouseClicked() {
 			windowDescription.class("window-description");
 			// const bgColor = 'rgba(9,8,7,0.95)' 
 			// const bgColorBottom = 'rgba(9,8,7,0.85)' 
-			windowDescription.style(`background-image: url('./src/assets/${selectedWindow.bgFile}');`)
+			windowDescription.style(`background-image: linear-gradient(0deg, rgba(9,8,7,0.85), rgba(9,8,7,0.95)), url('./src/assets/${selectedWindow.bgFile}');`)
+			if (selectedWindow.sceneAsset) {
+				select('.bg-scene').style(`background-image: url('./src/assets/${selectedWindow.sceneAsset}');`)
+			} else {
+				select('.bg-scene').style(`background-image: none;`)
+			}
+			if ( currentState === stateAlert) {
+				select('.bg-scene').style(`animation: shake 1.0s; animation-iteration-count: infinite;`)
+			}
+			if ( currentState === stateDestruction) {
+				select('.bg-scene').style(`animation: shake 4.0s; animation-iteration-count: infinite;`)
+			}
 			// select('.person-one').style(`background-image: url('./src/assets/${selectedWindow.personOneAsset}');`)
 			// select('.person-two').style(`background-image: url('./src/assets/${selectedWindow.personTwoAsset}');`)
 			// select('.person-three').style(`background-image: url('./src/assets/${selectedWindow.personThreeAsset}');`)
