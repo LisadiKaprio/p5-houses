@@ -24,6 +24,7 @@ let houseAsset3;
 let houseAsset4;
 let houseAsset5;
 let bombAsset;
+let trashAsset;
 let mapAsset;
 let mapAssetChanged;
 let w1HoverAsset;
@@ -54,6 +55,7 @@ function preload () {
 	houseAsset4 = loadImage('src/assets/4.png');
 	houseAsset5 = loadImage('src/assets/5.png');
 	bombAsset = loadImage('src/assets/bomb1.gif');
+	trashAsset = loadImage('src/assets/raindrop.png');
 	mapAsset = loadImage('src/assets/map-1.jpg');
 	mapAssetChanged = loadImage('src/assets/map-3.jpg');
 	w1HoverAsset = loadImage('src/assets/w1-hover.jpg');
@@ -116,6 +118,7 @@ let stateBegin = 'stateBegin';
 let stateAlert = 'stateAlert';
 let stateDestruction = 'stateDestruction';
 let currentState = stateBegin;
+let canClickWindows = true;
 class Cursor {
 	constructor() {
 		this.radius = cursorRadius;
@@ -270,10 +273,10 @@ class Siren {
 	}
 }
 
-
-let siren = new Siren({});
-let sirenLeft = new Siren({startx: window.innerWidth / 6});
-let sirenRight = new Siren({ startx: window.innerWidth / 6 * 5});
+let sirenOne = new Siren({startx: 837, starty: 626});
+let sirenTwo = new Siren({startx: 357, starty: 1514});
+let sirenThree = new Siren({startx: 1932, starty: 962});
+let sirenFour = new Siren({startx: 68, starty: 421});
 
 class Flash {
 	constructor(color, time, duration) {
@@ -328,6 +331,7 @@ class Flash {
 			} 
 			// when getting transparent again
 			else {
+				canClickWindows = true;
 				alpha = map(
 					abs(this.lifetime - (this.time + this.duration)),
 					0,
@@ -347,6 +351,56 @@ class Flash {
 
 let flash = new Flash(color(248, 249, 250), 25, 175);
 
+class Rain {
+    constructor(config) {
+		this.maxSpeed = config.maxSpeed || 10;
+        this.drop = [];
+        for (var i = 0; i < 25; i++) {
+            this.drop[i] = new Drop(this.maxSpeed, 3);
+        }
+    }
+
+    show() {
+        for (var i = 0; i < this.drop.length; i++) {
+            this.drop[i].fall();
+            this.drop[i].show();
+        }
+    }
+}
+
+let rain;
+
+class Drop {
+  constructor(maxSpeed, angle) {
+    this.maxSpeed = maxSpeed;
+    this.angle = angle;
+    this.x = random(mapAsset.width / 3, mapAsset.width);
+    this.y = random(-500, -50);
+    this.z = random(0, 150);
+    this.len = map(this.z, 0, 20, 10, 17);
+    this.xspeed = map(this.z, 0, 20, 1, this.maxSpeed / 4);
+    this.yspeed = map(this.z, 0, 20, 1, this.maxSpeed);
+    this.img = trashAsset;
+	this.rotationAngle = random(0, 360);
+  }
+
+  fall() {
+    this.x = this.x + this.angle * this.xspeed;
+    this.y = this.y + this.yspeed;
+    var grav = map(this.z, 0, 20, 0, 0.2);
+    this.yspeed = this.yspeed + grav;
+
+    if (this.y > mapAsset.height) {
+		this.x = random(-window.innerWidth / 6, mapAsset.width);
+      this.y = random(-200, -100);
+      this.yspeed = map(this.z, 0, 20, 4, this.maxSpeed);
+    }
+  }
+
+  show() {
+    image(this.img, this.x, this.y, this.len, this.len);
+  }
+}
 class ScrollingText {
 	constructor(text, y) {
 	  this.text = text;
@@ -555,6 +609,12 @@ class Map {
 	changeState(state) {
 		if (state === stateDestruction) {
 			flash.enabled = true;
+
+			// make sure no window description shows
+			canClickWindows = false;
+			windowDescription.removeClass("window-description");
+			windowDescription.class("window-description-hidden");
+			scrollingEnabled = true;
 		}
 		currentState = state;
 		if (state === stateAlert) {
@@ -628,6 +688,14 @@ class Map {
 			this.drawFireflies(fireflies);
 		} else if (currentState === stateDestruction) {
 			this.drawFireflies(darkFireflies);
+			rain.show();
+		}
+
+		if(currentState === stateAlert) {
+			sirenOne.draw();
+			sirenTwo.draw();
+			sirenThree.draw();
+			sirenFour.draw();
 		}
 
 		pop();
@@ -655,13 +723,7 @@ class Map {
 				this.drawGradient(gradient4);
 			}
 		}
-
-		if(currentState === stateAlert) {
-			siren.draw();
-			sirenLeft.draw();
-			sirenRight.draw();
-			scrollingText.display();
-		}
+		if(currentState === stateAlert) scrollingText.display();
 		pop();
 	}
 }
@@ -675,10 +737,6 @@ function windowResized() {
 
 	targetCameraPositionX = stayInBoundsX(targetCameraPositionX);
 	targetCameraPositionY = stayInBoundsY(targetCameraPositionY);
-
-	siren.startx = window.innerWidth / 2;
-	sirenLeft.startx = window.innerWidth / 6;
-	sirenRight.startx = window.innerWidth / 6 * 5;
 
 	scrollingText.y = window.innerHeight;
 	// if on smaller screen and portrait, don't use bg image 
@@ -724,8 +782,9 @@ function mouseClicked() {
 			myMap.changeState(stateDestruction);
 		}
 	}
+	if(!canClickWindows) return;
 	myMap.windowArray.forEach(selectedWindow => {
-		if(selectedWindow.isHoveredOver) {
+		if(selectedWindow.isHoveredOver ) {
 			gsap.from('.stagger-animation', {
 			  duration: 1,
 			  opacity: 0,
@@ -839,6 +898,10 @@ function setup() {
 	windowDescription = select('.window-description-hidden');
 
 	myMap.setup();
+
+	rain = new Rain({
+		maxSpeed: 1,
+	});
 
 	eventWindowNeededAmount = myMap.windowArray.length;
 }
