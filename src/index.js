@@ -58,22 +58,16 @@ function preload () {
 	trashAsset = loadImage('src/assets/raindrop.png');
 	mapAsset = loadImage('src/assets/map-1.jpg');
 	mapAssetChanged = loadImage('src/assets/map-3.jpg');
-	w1HoverAsset = loadImage('src/assets/w1-hover.jpg');
-	w1SeenAsset = loadImage('src/assets/w1-seen.jpg');
-	w2HoverAsset = loadImage('src/assets/w2-hover.jpg');
-	w2SeenAsset = loadImage('src/assets/w2-seen.jpg');
-	w3HoverAsset = loadImage('src/assets/w3-hover.jpg');
-	w3SeenAsset = loadImage('src/assets/w3-seen.jpg');
-	w4HoverAsset = loadImage('src/assets/w4-hover.jpg');
-	w4SeenAsset = loadImage('src/assets/w4-seen.jpg');
-	w5HoverAsset = loadImage('src/assets/w5-hover.jpg');
-	w5SeenAsset = loadImage('src/assets/w5-seen.jpg');
-	w6HoverAsset = loadImage('src/assets/w6-hover.jpg');
-	w6SeenAsset = loadImage('src/assets/w6-seen.jpg');
-	w7HoverAsset = loadImage('src/assets/w7-hover.jpg');
-	w7SeenAsset = loadImage('src/assets/w7-seen.jpg');
-	w8HoverAsset = loadImage('src/assets/w8-hover.jpg');
-	w8SeenAsset = loadImage('src/assets/w8-seen.jpg');
+	w1HoverAsset = loadImage('src/assets/w1-hover.png');
+	w2HoverAsset = loadImage('src/assets/w2-hover.png');
+	w3HoverAsset = loadImage('src/assets/w4-hover.png');
+	w4HoverAsset = loadImage('src/assets/w3-hover.png');
+	w5HoverAsset = loadImage('src/assets/w5-hover.png');
+	w1SeenAsset = loadImage('src/assets/w1-read.png');
+	w2SeenAsset = loadImage('src/assets/w2-read.png');
+	w3SeenAsset = loadImage('src/assets/w4-read.png');
+	w4SeenAsset = loadImage('src/assets/w3-read.png');
+	w5SeenAsset = loadImage('src/assets/w5-read.png');
 	selection1Asset = loadImage('src/assets/selection1.png');
 	selection2Asset = loadImage('src/assets/selection2.png');
 	selection3Asset = loadImage('src/assets/selection3.png');
@@ -234,14 +228,14 @@ class Siren {
 		this.startx = config.startx ||  window.innerWidth / 2;
 		this.starty = config.starty || -30;
 		this.startRadiusOffset = config.startRadiusOffset || -30;
-		this.startRadiusi = config.startRadiusi || [30, 15, 0, -15, -30];
+		this.startRadiusi = config.startRadiusi || [60, 45, 30, 15, 0, -15, -30, -45, -60];
 		this.x = this.startx;
 		this.y = this.starty;
 		this.radiusOffset = this.startRadiusOffset;
 		this.radiusi = this.startRadiusi;
 		this.s = config.s || 100;
-		this.maxSize = config.maxSize || window.innerWidth / 2;
-		this.maxTransparency = config.maxSize || 255;
+		this.maxSize = config.maxSize || 444444; // window.innerWidth * 0.9;
+		this.maxTransparency = 255;
 		this.myColorR = config.myColorR || 9;
 		this.myColorG = config.myColorG || 8;
 		this.myColorB = config.myColorB || 7;
@@ -273,10 +267,12 @@ class Siren {
 	}
 }
 
-let sirenOne = new Siren({startx: 837, starty: 626});
-let sirenTwo = new Siren({startx: 357, starty: 1514});
-let sirenThree = new Siren({startx: 1932, starty: 962});
-let sirenFour = new Siren({startx: 68, starty: 421});
+let sirenOne = new Siren({startx: 63, starty: 419});
+let sirenTwo = new Siren({startx: 102, starty: 422});
+let sirenThree = new Siren({startx: 349, starty: 1505});
+let sirenFour = new Siren({startx: 394, starty: 1500});
+let sirenFive = new Siren({startx: 1896, starty: 1010});
+let sirenSix = new Siren({startx: 1954, starty: 1015});
 
 class Flash {
 	constructor(color, time, duration) {
@@ -530,9 +526,9 @@ class Map {
 			this.window1 = new Window({
 					sizeX: w1HoverAsset.width,
 					sizeY: w1HoverAsset.height,
-					positionX: 558,
-					positionY: 477,
-					asset: w1SeenAsset,
+					positionX: 448,
+					positionY: 478,
+					asset: w1HoverAsset,
 					assetSeen: w1SeenAsset,
 					bgFile: 'wohnung-5.jpg',
 					sceneAsset: 'A1.png',
@@ -541,8 +537,8 @@ class Map {
 			this.window2 = new Window({
 					sizeX: w2HoverAsset.width,
 					sizeY: w2HoverAsset.height,
-					positionX: 1366,
-					positionY: 626,
+					positionX: 1377,
+					positionY: 360,
 					asset: w2HoverAsset,
 					assetSeen: w2SeenAsset,
 					bgFile: 'wohnung-4.jpg',
@@ -552,8 +548,8 @@ class Map {
 			this.window3 = new Window({
 					sizeX: w3HoverAsset.width,
 					sizeY: w3HoverAsset.height,
-					positionX: 1601,
-					positionY: 126,
+					positionX: 453,
+					positionY: 1219,
 					asset: w3HoverAsset,
 					assetSeen: w3SeenAsset,
 					sceneAsset: 'C1.png',
@@ -562,8 +558,8 @@ class Map {
 			this.window4 = new Window({
 					sizeX: w4HoverAsset.width,
 					sizeY: w4HoverAsset.height,
-					positionX: 129,
-					positionY: 1183,
+					positionX: 350,
+					positionY: 973,
 					asset: w4HoverAsset,
 					assetSeen: w4SeenAsset,
 					sceneAsset: 'D1.png',
@@ -572,8 +568,8 @@ class Map {
 			this.window5 = new Window({
 					sizeX: w5HoverAsset.width,
 					sizeY: w5HoverAsset.height,
-					positionX: 414,
-					positionY: 1338,
+					positionX: 883,
+					positionY: 1392,
 					asset: w5HoverAsset,
 					assetSeen: w5SeenAsset,
 					sceneAsset: 'E1.png',
@@ -696,6 +692,8 @@ class Map {
 			sirenTwo.draw();
 			sirenThree.draw();
 			sirenFour.draw();
+			sirenFive.draw();
+			sirenSix.draw();
 		}
 
 		pop();
