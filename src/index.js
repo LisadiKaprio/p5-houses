@@ -127,11 +127,6 @@ class Cursor {
         if (isMouseHoveringOnInteractable()) cursor('pointer');
         else cursor('grab');
 
-        // fill(0, 0, 0, 0);
-        // stroke(9, 8, 7, 50);
-        // strokeWeight(4);
-        // circle(mouseX+ (mouseX*-0.03), mouseY+ (mouseY*-0.03), cursorRadius+10)
-
         fill(0, 0, 0, 0);
         stroke(255, 255, 255, 50);
 
@@ -318,6 +313,56 @@ let sirenThree = new Siren({ startx: 349, starty: 1505 });
 let sirenFour = new Siren({ startx: 394, starty: 1500 });
 let sirenFive = new Siren({ startx: 1896, starty: 1010 });
 let sirenSix = new Siren({ startx: 1954, starty: 1015 });
+class ScrollingText {
+    constructor(text, y) {
+        this.text = text;
+        this.textWidth = textWidth(this.text);
+        this.startX = 0;
+        this.x = this.startX;
+        // this.startXClone = this.x+this.textWidth;
+        this.xClone = window.innerWidth;
+        this.moveX = true;
+        this.moveXClone = false;
+        this.textSize = 20;
+        this.y = y;
+    }
+
+    display() {
+        noStroke();
+        textSize(this.textSize);
+        textStyle(BOLD);
+        fill(200);
+        text(this.text, this.x, this.y - this.textSize);
+        fill(170);
+        text(this.text, this.xClone, this.y - this.textSize);
+
+        if (this.moveX) {
+            this.x -= 1;
+        }
+        if (this.moveXClone) {
+            this.xClone -= 1;
+        }
+
+        // if the right edge of line is visible,
+        // then start moving clone line
+        if (this.x + textWidth(this.text) < window.innerWidth)
+            this.moveXClone = true;
+        if (this.xClone + textWidth(this.text) < window.innerWidth)
+            this.moveX = true;
+
+        // if any line no longer visible, it teleports to very right
+        if (this.x < this.startX - textWidth(this.text)) {
+            this.x = window.innerWidth;
+            this.moveX = false;
+        }
+        if (this.xClone < this.startX - textWidth(this.text)) {
+            this.xClone = window.innerWidth;
+            this.moveXClone = false;
+        }
+    }
+}
+
+let scrollingText;
 
 class Flash {
     constructor(color, time, duration) {
@@ -401,25 +446,6 @@ class Flash {
 
 let flash = new Flash(color(248, 249, 250), 25, 175);
 
-class Rain {
-    constructor(config) {
-        this.maxSpeed = config.maxSpeed || 10;
-        this.drop = [];
-        for (var i = 0; i < 25; i++) {
-            this.drop[i] = new Drop(this.maxSpeed, 3);
-        }
-    }
-
-    show() {
-        for (var i = 0; i < this.drop.length; i++) {
-            this.drop[i].fall();
-            this.drop[i].show();
-        }
-    }
-}
-
-let rain;
-
 class Drop {
     constructor(maxSpeed, angle) {
         this.maxSpeed = maxSpeed;
@@ -451,56 +477,25 @@ class Drop {
         image(this.img, this.x, this.y, this.len, this.len);
     }
 }
-class ScrollingText {
-    constructor(text, y) {
-        this.text = text;
-        this.textWidth = textWidth(this.text);
-        this.startX = 0;
-        this.x = this.startX;
-        // this.startXClone = this.x+this.textWidth;
-        this.xClone = window.innerWidth;
-        this.moveX = true;
-        this.moveXClone = false;
-        this.textSize = 20;
-        this.y = y;
+
+class Rain {
+    constructor(config) {
+        this.maxSpeed = config.maxSpeed || 10;
+        this.drop = [];
+        for (var i = 0; i < 25; i++) {
+            this.drop[i] = new Drop(this.maxSpeed, 3);
+        }
     }
 
-    display() {
-        noStroke();
-        textSize(this.textSize);
-        textStyle(BOLD);
-        fill(200);
-        text(this.text, this.x, this.y - this.textSize);
-        fill(170);
-        text(this.text, this.xClone, this.y - this.textSize);
-
-        if (this.moveX) {
-            this.x -= 1;
-        }
-        if (this.moveXClone) {
-            this.xClone -= 1;
-        }
-
-        // if the right edge of line is visible,
-        // then start moving clone line
-        if (this.x + textWidth(this.text) < window.innerWidth)
-            this.moveXClone = true;
-        if (this.xClone + textWidth(this.text) < window.innerWidth)
-            this.moveX = true;
-
-        // if any line no longer visible, it teleports to very right
-        if (this.x < this.startX - textWidth(this.text)) {
-            this.x = window.innerWidth;
-            this.moveX = false;
-        }
-        if (this.xClone < this.startX - textWidth(this.text)) {
-            this.xClone = window.innerWidth;
-            this.moveXClone = false;
+    show() {
+        for (var i = 0; i < this.drop.length; i++) {
+            this.drop[i].fall();
+            this.drop[i].show();
         }
     }
 }
 
-let scrollingText;
+let rain;
 
 class Interactable {
     constructor(config) {
@@ -517,6 +512,7 @@ class Interactable {
         this.isHoveredOver = false;
         this.isSeen = false;
         this.frameTime = config.frameTime || 10;
+        this.isNonInteractive = config.isNonInteractive || false;
     }
 
     checkMouseOver() {
@@ -561,11 +557,15 @@ class Interactable {
 
     draw() {
         push();
-        this.checkMouseOver();
-        if (this.isHoveredOver) {
+        if (this.isNonInteractive) {
             this.drawFrame(this.asset);
-        } else if (this.isSeen) {
-            this.drawFrame(this.assetSeen);
+        } else {
+            this.checkMouseOver();
+            if (this.isHoveredOver) {
+                this.drawFrame(this.asset);
+            } else if (this.isSeen) {
+                this.drawFrame(this.assetSeen);
+            }
         }
         pop();
     }
@@ -686,6 +686,7 @@ class Map {
                 positionY: 0,
                 asset: [rauch1, rauch2],
                 frameTime: 25,
+                isNonInteractive: true
             });
         }
         currentState = state;
@@ -823,6 +824,9 @@ function windowResized() {
     targetCameraPositionY = stayInBoundsY(targetCameraPositionY);
 
     scrollingText.y = window.innerHeight;
+
+    flash.imageX = window.innerWidth / 2 - flash.imageSizeX / 2;
+    flash.imageY = window.innerHeight / 2 - flash.imageSizeY / 2;
     // if on smaller screen and portrait, don't use bg image
     // if (window.innerHeight > window.innerWidth*1.3 && window.innerWidth < 1000) {
     //   background(10);
