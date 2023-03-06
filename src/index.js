@@ -110,6 +110,7 @@ let difX = 0;
 let difY = 0;
 
 let stateBegin = 'stateBegin';
+let stateOutro = 'stateOutro';
 let stateAlert = 'stateAlert';
 let stateDestruction = 'stateDestruction';
 let currentState = stateBegin;
@@ -375,6 +376,8 @@ class Flash {
         this.fadeLength = time * 0.75;
         this.enabled = false;
 
+        this.alpha = 0;
+        this.imageAlpha = 0;
         this.imageSizeX = 100;
         this.imageSizeY = 100;
         this.imageX = window.innerWidth / 2 - this.imageSizeX / 2;
@@ -384,55 +387,59 @@ class Flash {
 
     update() {
         this.lifetime += 1;
+
+        if (this.lifetime > this.duration + this.time + this.fadeLengthOut) {
+            this.enabled = false;
+        }
+        // when fully opaque
+        if (
+            this.lifetime > this.time &&
+            this.lifetime < this.duration + this.time
+        ) {
+            this.alpha = 255;
+            this.imageAlpha = map(
+                abs(this.lifetime - this.time) * 0.05,
+                0,
+                this.time,
+                255,
+                0
+            );
+            myMap.switchMapContentDestruction();
+        }
+        // when getting opaque
+        else if (this.lifetime <= this.time) {
+            this.alpha = map(
+                abs(this.lifetime - this.time),
+                0,
+                this.fadeLengthOut,
+                255,
+                0
+            );
+            this.imageAlpha = this.alpha;
+        }
+        // when getting transparent again
+        else {
+            canClickWindows = true;
+            this.alpha = map(
+                abs(this.lifetime - (this.time + this.duration)),
+                0,
+                this.fadeLength,
+                255,
+                0
+            );
+            this.imageAlpha = 0;
+        }
     }
+
+
 
     draw() {
         if (this.enabled) {
             this.update();
-            let alpha;
-            let imageAlpha;
-            // when fully opaque
-            if (
-                this.lifetime > this.time &&
-                this.lifetime < this.duration + this.time
-            ) {
-                alpha = 255;
-                imageAlpha = map(
-                    abs(this.lifetime - this.time) * 0.05,
-                    0,
-                    this.time,
-                    255,
-                    0
-                );
-                myMap.switchMapContentDestruction();
-            }
-            // when getting opaque
-            else if (this.lifetime <= this.time) {
-                alpha = map(
-                    abs(this.lifetime - this.time),
-                    0,
-                    this.fadeLengthOut,
-                    255,
-                    0
-                );
-                imageAlpha = alpha;
-            }
-            // when getting transparent again
-            else {
-                canClickWindows = true;
-                alpha = map(
-                    abs(this.lifetime - (this.time + this.duration)),
-                    0,
-                    this.fadeLength,
-                    255,
-                    0
-                );
-                imageAlpha = 0;
-            }
-            this.color.setAlpha(alpha);
+            this.color.setAlpha(this.alpha);
             fill(this.color);
             rect(0, 0, window.innerWidth, window.innerHeight);
-            tint(255, imageAlpha);
+            tint(255, this.imageAlpha);
             image(
                 bombAsset,
                 this.imageX,
@@ -444,7 +451,59 @@ class Flash {
     }
 }
 
+class Fade {
+    constructor(color, fadeIn, keepTime, fadeOut) {
+        this.color = color;
+        this.fadeIn = fadeIn;
+        this.keepTime = keepTime;
+        this.fadeOut = fadeOut;
+        this.lifetime = 0;
+        this.enabled = false;
+
+        this.alpha = 0;
+    }
+
+    update() {
+        this.lifetime += 1;
+
+        if (this.lifetime < this.fadeIn)  {
+            this.alpha = map(
+                this.fadeIn - this.lifetime,
+                this.fadeIn,
+                0,
+                0,
+                255
+            );
+        } else if (this.lifetime < this.fadeIn + this.keepTime) {
+            this.alpha = 255;
+        } else if (this.lifetime < this.fadeIn + this.keepTime + this.fadeOut) {
+            
+            this.alpha = map(
+                this.fadeIn + this.keepTime + this.fadeOut - this.lifetime,
+                this.fadeOut,
+                0,
+                255,
+                0
+            );
+        } else {
+            this.alpha = 0;
+            this.enabled = false;
+        }
+    }
+
+    draw() {
+        if (this.enabled) {
+            this.update();
+            this.color.setAlpha(this.alpha);
+            fill(this.color);
+            rect(0, 0, window.innerWidth, window.innerHeight);
+        }
+    }
+}
+
 let flash = new Flash(color(248, 249, 250), 25, 175);
+let intro = new Fade(color(0, 0, 0), 0, 100, 50);
+let outro = new Fade(color(0, 0, 0), 50, 99999, 0);
 
 class Drop {
     constructor(maxSpeed, angle) {
@@ -668,16 +727,24 @@ class Map {
             // 		assetSeen: w8SeenAsset,
             // 	}),
         ];
+        this.changeState(stateBegin);
     }
     changeState(state) {
-        if (state === stateDestruction) {
-            flash.enabled = true;
-
+        if (state === stateOutro || state === stateDestruction) {
             // make sure no window description shows
             canClickWindows = false;
             windowDescription.removeClass('window-description');
             windowDescription.class('window-description-hidden');
             scrollingEnabled = true;
+        }
+        if (state === stateOutro) {
+            outro.enabled = true;
+        }
+        if (state === stateBegin) {
+            intro.enabled = true;
+        }
+        if (state === stateDestruction) {
+            flash.enabled = true;
 
             this.rauch = new Interactable({
                 sizeX: rauch1.width,
@@ -783,6 +850,10 @@ class Map {
         const ac = 4;
         const ad = 6;
         const ae = 7;
+
+        intro.draw();
+        outro.draw();
+        
         if (currentState === stateDestruction) {
             flash.draw();
         }
@@ -874,6 +945,11 @@ function mouseClicked() {
             currentState === stateAlert
         ) {
             myMap.changeState(stateDestruction);
+        } else if (
+            eventWindowSeenAmount >= 5 &&
+            currentState === stateDestruction
+        ) {
+            myMap.changeState(stateOutro);
         }
     }
     if (!canClickWindows) return;
