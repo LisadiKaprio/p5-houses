@@ -47,6 +47,34 @@ let gradient1;
 let gradient2;
 let gradient3;
 let gradient4;
+// let bgNormalAAsset;
+// let bgNormalBAsset;
+// let bgNormalCAsset;
+// let bgNormalDAsset;
+// let bgNormalEAsset;
+// let bgDestructionBAsset;
+// let bgAlertBAsset;
+// let bgDestructionAAsset;
+// let bgAlertAAsset;
+// let bgDestructionCAsset;
+// let bgAlertCAsset;
+// let bgDestructionDAsset;
+// let bgAlertDAsset;
+// let bgDestructionEAsset;
+// let bgAlertEAsset;
+// let sceneA1Asset;
+// let sceneA2Asset;
+// let sceneA3Asset;
+// let sceneB1Asset;
+// let sceneB2Asset;
+// let sceneB3Asset;
+// let sceneC1Asset;
+// let sceneC2Asset;
+// let sceneD1Asset;
+// let sceneD2Asset;
+// let sceneE1Asset;
+// let sceneE2Asset;
+// let sceneE3Asset;
 
 function preload() {
     houseAsset2 = loadImage('src/assets/2.png');
@@ -76,6 +104,36 @@ function preload() {
     gradient4 = loadImage('src/assets/gradient4.png');
     rauch1 = loadImage('src/assets/rauch1.png');
     rauch2 = loadImage('src/assets/rauch2.png');
+    // bgNormalAAsset = loadImage('src/assets/wA-1.jpg');
+    // bgNormalBAsset = loadImage('src/assets/wB-1.jpg');
+    // bgNormalCAsset = loadImage('src/assets/wC-1.jpg');
+    // bgNormalDAsset = loadImage('src/assets/wD-1.jpg');
+    // bgNormalEAsset = loadImage('src/assets/wE-1.jpg');
+    // bgAlertAAsset = loadImage('src/assets/wA-2.jpg');
+    // bgAlertBAsset = loadImage('src/assets/wB-2.jpg');
+    // bgAlertCAsset = loadImage('src/assets/wC-2.jpg');
+    // bgAlertDAsset = loadImage('src/assets/wD-2.jpg');
+    // bgAlertEAsset = loadImage('src/assets/wE-2.jpg');    
+    // bgDestructionAAsset = loadImage('src/assets/wA-3.jpg');
+    // bgDestructionBAsset = loadImage('src/assets/wB-3.jpg');
+    // bgDestructionCAsset = loadImage('src/assets/wC-3.jpg');
+    // bgDestructionDAsset = loadImage('src/assets/wD-3.jpg');
+    // bgDestructionEAsset = loadImage('src/assets/wE-3.jpg');
+
+    
+    // sceneA1Asset = loadImage('src/assets/A1.png');
+    // sceneA2Asset = loadImage('src/assets/A2.png');
+    // sceneA3Asset = loadImage('src/assets/A3.png');
+    // sceneB1Asset = loadImage('src/assets/B1.png');
+    // sceneB2Asset = loadImage('src/assets/B2.png');
+    // sceneB3Asset = loadImage('src/assets/B3.png');
+    // sceneC1Asset = loadImage('src/assets/C1.png');
+    // sceneC2Asset = loadImage('src/assets/C2.png');
+    // sceneD1Asset = loadImage('src/assets/D1.png');
+    // sceneD2Asset = loadImage('src/assets/D2.png');
+    // sceneE1Asset = loadImage('src/assets/E1.png');
+    // sceneE2Asset = loadImage('src/assets/E2.png');
+    // sceneE3Asset = loadImage('src/assets/E3.png');
 }
 
 // some value that makes sure the assets are displayed in reasonable size within the window
@@ -96,6 +154,8 @@ let cursorStrokeWeight = 3;
 let isCursorPointer = false;
 
 let windowDescription;
+let introHTML;
+let outroHTML;
 
 let eventWindowNeededAmount = 0;
 let eventWindowSeenAmount = 0;
@@ -114,7 +174,8 @@ let stateOutro = 'stateOutro';
 let stateAlert = 'stateAlert';
 let stateDestruction = 'stateDestruction';
 let currentState = stateBegin;
-let canClickWindows = true;
+let canClickWindows = false;
+let canDrag = false;
 class Cursor {
     constructor() {
         this.radius = cursorRadius;
@@ -126,6 +187,7 @@ class Cursor {
     display() {
         // noCursor();
         if (isMouseHoveringOnInteractable()) cursor('pointer');
+        else if (!canDrag) cursor('auto');
         else cursor('grab');
 
         fill(0, 0, 0, 0);
@@ -452,13 +514,14 @@ class Flash {
 }
 
 class Fade {
-    constructor(color, fadeIn, keepTime, fadeOut) {
+    constructor(color, fadeIn, keepTime, fadeOut, isOutro) {
         this.color = color;
         this.fadeIn = fadeIn;
         this.keepTime = keepTime;
         this.fadeOut = fadeOut;
         this.lifetime = 0;
         this.enabled = false;
+        this.isOutro = isOutro || false;
 
         this.alpha = 0;
     }
@@ -467,6 +530,9 @@ class Fade {
         this.lifetime += 1;
 
         if (this.lifetime < this.fadeIn)  {
+            if (this.isOutro) {
+                showOutroSplash();
+            }
             this.alpha = map(
                 this.fadeIn - this.lifetime,
                 this.fadeIn,
@@ -477,7 +543,9 @@ class Fade {
         } else if (this.lifetime < this.fadeIn + this.keepTime) {
             this.alpha = 255;
         } else if (this.lifetime < this.fadeIn + this.keepTime + this.fadeOut) {
-            
+            // only happens on intro
+            hideIntroSplash();
+
             this.alpha = map(
                 this.fadeIn + this.keepTime + this.fadeOut - this.lifetime,
                 this.fadeOut,
@@ -501,9 +569,35 @@ class Fade {
     }
 }
 
+function hideIntroSplash() {
+    gsap.to('.fade-out-animation', {
+        duration: 1,
+        opacity: 0,
+        y: 5,
+        ease: 'power4',
+        stagger: 0.1,
+    });
+    canClickWindows = true;
+    canDrag = true;
+}
+
+function showOutroSplash() {
+    outroHTML.removeClass('pointer-none');
+    gsap.to('.outro', {
+        duration: 1,
+        opacity: 1,
+        y: 5,
+        ease: 'power4',
+        stagger: 0.1,
+    });
+    // introHTML.class('intro-hidden');
+    canClickWindows = true;
+    canDrag = true;
+}
+
 let flash = new Flash(color(248, 249, 250), 25, 175);
-let intro = new Fade(color(0, 0, 0), 0, 100, 50);
-let outro = new Fade(color(0, 0, 0), 50, 99999, 0);
+let intro = new Fade(color(9, 8, 7), 0, 100, 50);
+let outro = new Fade(color(0, 0, 0), 50, 99999, 0, true);
 
 class Drop {
     constructor(maxSpeed, angle) {
@@ -636,7 +730,10 @@ class Window extends Interactable {
         this.story1 = config.story1 || 'Person, 27.';
         this.story2 = config.story2 || '';
         this.story3 = config.story3 || 'Calm.';
-        this.bgFile = config.bgFile || 'wohnung-5.jpg';
+        this.bgNormal = config.bgNormal || 'wA-1.jpg';
+        this.bgAlert = config.bgAlert || 'wA-2.jpg';
+        this.bgDestruction = config.bgDestruction || 'wA-3.jpg';
+        this.bgFile = this.bgNormal || 'wA-1.jpg';
         this.sceneAsset = config.sceneAsset || 'A1.png';
     }
 }
@@ -656,7 +753,9 @@ class Map {
                 positionY: 478,
                 asset: w1HoverAsset,
                 assetSeen: w1SeenAsset,
-                bgFile: 'wohnung-5.jpg',
+                bgNormal: 'wA-1.jpg',
+                bgAlert: 'wA-2.jpg',
+                bgDestruction: 'wA-3.jpg',
                 sceneAsset: 'A1.png',
                 story3: storyA1en,
             })),
@@ -667,7 +766,9 @@ class Map {
                 positionY: 360,
                 asset: w2HoverAsset,
                 assetSeen: w2SeenAsset,
-                bgFile: 'wohnung-4.jpg',
+                bgNormal: 'wB-1.jpg',
+                bgAlert: 'wB-2.jpg',
+                bgDestruction: 'wB-3.jpg',
                 sceneAsset: 'B1.png',
                 story3: storyB1en,
             })),
@@ -678,6 +779,9 @@ class Map {
                 positionY: 1219,
                 asset: w3HoverAsset,
                 assetSeen: w3SeenAsset,
+                bgNormal: 'wC-1.jpg',
+                bgAlert: 'wC-2.jpg',
+                bgDestruction: 'wC-3.jpg',
                 sceneAsset: 'C1.png',
                 story3: storyC1en,
             })),
@@ -688,6 +792,9 @@ class Map {
                 positionY: 973,
                 asset: w4HoverAsset,
                 assetSeen: w4SeenAsset,
+                bgNormal: 'wD-1.jpg',
+                bgAlert: 'wD-2.jpg',
+                bgDestruction: 'wD-3.jpg',
                 sceneAsset: 'D1.png',
                 story3: storyD1en,
             })),
@@ -698,34 +805,12 @@ class Map {
                 positionY: 1392,
                 asset: w5HoverAsset,
                 assetSeen: w5SeenAsset,
+                bgNormal: 'wE-1.jpg',
+                bgAlert: 'wE-2.jpg',
+                bgDestruction: 'wE-3.jpg',
                 sceneAsset: 'E1.png',
                 story3: storyE1en,
-            })),
-            // this.window6 = new Window({
-            // 		sizeX: w6HoverAsset.width,
-            // 		sizeY: w6HoverAsset.height,
-            // 		positionX: 1225,
-            // 		positionY: 1442,
-            // 		asset: w6HoverAsset,
-            // 		assetSeen: w6SeenAsset,
-            // 	}),
-            // fix position/asset first
-            // this.window7 = new Window({
-            // 		sizeX: w7HoverAsset.width,
-            // 		sizeY: w7HoverAsset.height,
-            // 		positionX: 1307,
-            // 		positionY: 1441,
-            // 		asset: w7HoverAsset,
-            // 		assetSeen: w7SeenAsset,
-            // 	}),
-            // this.window8 = new Window({
-            // 		sizeX: w8HoverAsset.width,
-            // 		sizeY: w8HoverAsset.height,
-            // 		positionX: 1868,
-            // 		positionY: 1444,
-            // 		asset: w8HoverAsset,
-            // 		assetSeen: w8SeenAsset,
-            // 	}),
+            }))
         ];
         this.changeState(stateBegin);
     }
@@ -745,6 +830,11 @@ class Map {
         }
         if (state === stateDestruction) {
             flash.enabled = true;
+            this.window1.bgFile = this.window1.bgDestruction;
+            this.window2.bgFile = this.window2.bgDestruction;
+            this.window3.bgFile = this.window3.bgDestruction;
+            this.window4.bgFile = this.window4.bgDestruction;
+            this.window5.bgFile = this.window5.bgDestruction;
 
             this.rauch = new Interactable({
                 sizeX: rauch1.width,
@@ -767,6 +857,11 @@ class Map {
             this.window3.story3 = storyC2en;
             this.window4.story3 = storyD2en;
             this.window5.story3 = storyE2en;
+            this.window1.bgFile = this.window1.bgAlert;
+            this.window2.bgFile = this.window2.bgAlert;
+            this.window3.bgFile = this.window3.bgAlert;
+            this.window4.bgFile = this.window4.bgAlert;
+            this.window5.bgFile = this.window5.bgAlert;
             this.window1.sceneAsset = 'A2.png';
             this.window2.sceneAsset = 'B2.png';
             this.window3.sceneAsset = 'C2.png';
@@ -946,7 +1041,7 @@ function mouseClicked() {
         ) {
             myMap.changeState(stateDestruction);
         } else if (
-            eventWindowSeenAmount >= 5 &&
+            eventWindowSeenAmount >= 2 &&
             currentState === stateDestruction
         ) {
             myMap.changeState(stateOutro);
@@ -965,17 +1060,17 @@ function mouseClicked() {
             // select('.first-text').html(selectedWindow.story1);
             // select('.second-text').html(selectedWindow.story2);
             select('.third-text').html(selectedWindow.story3);
-            let descriptionPositionX = mouseX;
-            let descriptionPositionY = mouseY;
-            if (mouseX > window.innerWidth * 0.6) {
-                descriptionPositionX *= 0.45;
-            }
-            if (mouseY > window.innerHeight * 0.6) {
-                descriptionPositionY *= 0.45;
-            }
+            // let descriptionPositionX = mouseX;
+            // let descriptionPositionY = mouseY;
+            // if (mouseX > window.innerWidth * 0.6) {
+            //     descriptionPositionX *= 0.45;
+            // }
+            // if (mouseY > window.innerHeight * 0.6) {
+            //     descriptionPositionY *= 0.45;
+            // }
             windowDescription.position(
-                descriptionPositionX,
-                descriptionPositionY
+                (window.innerWidth/2 - 300),
+                (window.innerHeight/2 - 200)
             );
 
             windowDescription.class('window-description');
@@ -1084,6 +1179,25 @@ function setup() {
     background(9, 8, 7);
 
     windowDescription = select('.window-description-hidden');
+    introHTML = select('.intro');
+    introHTML.position(
+        (window.innerWidth/2 - introHTML.size().width/2),
+        (window.innerHeight/2 - introHTML.size().height/2)
+    );
+    gsap.from('.fade-out-animation', {
+        duration: 1,
+        opacity: 1,
+        y: -5,
+        ease: 'power4',
+        stagger: 0.1,
+    });
+
+    outroHTML = select('.outro');
+    outroHTML.position(
+        (window.innerWidth/2 - introHTML.size().width/2),
+        (window.innerHeight/2 - introHTML.size().height/2)
+    );
+    gsap.set('.outro', {opacity: 0});
 
     myMap.setup();
 
