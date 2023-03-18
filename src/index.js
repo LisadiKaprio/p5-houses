@@ -25,6 +25,7 @@ let houseAsset5;
 let bombAsset;
 let trashAsset;
 let mapAsset;
+let mapAssetAlert;
 let mapAssetChanged;
 let w1HoverAsset;
 let w1SeenAsset;
@@ -36,10 +37,26 @@ let w4HoverAsset;
 let w4SeenAsset;
 let w5HoverAsset;
 let w5SeenAsset;
-let w6HoverAsset;
-let w6SeenAsset;
-let w7HoverAsset;
-let w7SeenAsset;
+let w1AlertHoverAsset;
+let w1AlertSeenAsset;
+let w2AlertHoverAsset;
+let w2AlertSeenAsset;
+let w3AlertHoverAsset;
+let w3AlertSeenAsset;
+let w4AlertHoverAsset;
+let w4AlertSeenAsset;
+let w5AlertHoverAsset;
+let w5AlertSeenAsset;
+let w1DestructionHoverAsset;
+let w1DestructionSeenAsset;
+let w2DestructionHoverAsset;
+let w2DestructionSeenAsset;
+let w3DestructionHoverAsset;
+let w3DestructionSeenAsset;
+let w4DestructionHoverAsset;
+let w4DestructionSeenAsset;
+let w5DestructionHoverAsset;
+let w5DestructionSeenAsset;
 let selection1Asset;
 let selection2Asset;
 let selection3Asset;
@@ -77,13 +94,10 @@ let gradient4;
 // let sceneE3Asset;
 
 function preload() {
-    houseAsset2 = loadImage('src/assets/2.png');
-    houseAsset3 = loadImage('src/assets/3.png');
-    houseAsset4 = loadImage('src/assets/4.png');
-    houseAsset5 = loadImage('src/assets/5.png');
     bombAsset = loadImage('src/assets/bomb1.gif');
     trashAsset = loadImage('src/assets/raindrop.png');
     mapAsset = loadImage('src/assets/map-1.jpg');
+    mapAssetAlert = loadImage('src/assets/map-4E-alert.jpg');
     mapAssetChanged = loadImage('src/assets/map-3.jpg');
     w1HoverAsset = loadImage('src/assets/w1-hover.png');
     w2HoverAsset = loadImage('src/assets/w2-hover.png');
@@ -95,6 +109,26 @@ function preload() {
     w3SeenAsset = loadImage('src/assets/w4-read.png');
     w4SeenAsset = loadImage('src/assets/w3-read.png');
     w5SeenAsset = loadImage('src/assets/w5-read.png');
+    w1AlertHoverAsset = loadImage('src/assets/w1-a-hover.jpg');
+    w2AlertHoverAsset = loadImage('src/assets/w2-a-hover.jpg');
+    w3AlertHoverAsset = loadImage('src/assets/w4-a-hover.jpg');
+    w4AlertHoverAsset = loadImage('src/assets/w3-a-hover.jpg');
+    w5AlertHoverAsset = loadImage('src/assets/w5-a-hover.jpg');
+    w1AlertSeenAsset = loadImage('src/assets/w1-a-read.jpg');
+    w2AlertSeenAsset = loadImage('src/assets/w2-a-read.jpg');
+    w3AlertSeenAsset = loadImage('src/assets/w4-a-read.jpg');
+    w4AlertSeenAsset = loadImage('src/assets/w3-a-read.jpg');
+    w5AlertSeenAsset = loadImage('src/assets/w5-a-read.jpg');
+    w1DestructionHoverAsset = loadImage('src/assets/w1-d-hover.jpg');
+    w2DestructionHoverAsset = loadImage('src/assets/w2-d-hover.jpg');
+    w3DestructionHoverAsset = loadImage('src/assets/w4-d-hover.jpg');
+    w4DestructionHoverAsset = loadImage('src/assets/w3-d-hover.jpg');
+    w5DestructionHoverAsset = loadImage('src/assets/w5-d-hover.jpg');
+    w1DestructionSeenAsset = loadImage('src/assets/w1-d-read.jpg');
+    w2DestructionSeenAsset = loadImage('src/assets/w2-d-read.jpg');
+    w3DestructionSeenAsset = loadImage('src/assets/w4-d-read.jpg');
+    w4DestructionSeenAsset = loadImage('src/assets/w3-d-read.jpg');
+    w5DestructionSeenAsset = loadImage('src/assets/w5-d-read.jpg');
     selection1Asset = loadImage('src/assets/selection1.png');
     selection2Asset = loadImage('src/assets/selection2.png');
     selection3Asset = loadImage('src/assets/selection3.png');
@@ -848,6 +882,28 @@ class Map {
             this.window4.bgFile = this.window4.bgDestruction;
             this.window5.bgFile = this.window5.bgDestruction;
 
+            this.window1.asset = w1DestructionHoverAsset;
+            this.window2.asset = w2DestructionHoverAsset;
+            this.window3.asset = w3DestructionHoverAsset;
+            this.window4.asset = w4DestructionHoverAsset;
+            this.window5.asset = w5DestructionHoverAsset;
+
+            this.window1.assetSeen = w1DestructionSeenAsset;
+            this.window2.assetSeen = w2DestructionSeenAsset;
+            this.window3.assetSeen = w3DestructionSeenAsset;
+            this.window4.assetSeen = w4DestructionSeenAsset;
+            this.window5.assetSeen = w5DestructionSeenAsset;
+
+            this.window1.positionX = 419;
+            this.window1.positionY = 442;
+            this.window2.positionX = 1336;
+            this.window2.positionY = 319;
+
+            this.window1.sizeX = w1DestructionSeenAsset.width;
+            this.window1.sizeY = w1DestructionSeenAsset.height;
+            this.window2.sizeX = w2DestructionSeenAsset.width;
+            this.window2.sizeY = w2DestructionSeenAsset.height;
+
             this.rauch = new Interactable({
                 sizeX: rauch1.width,
                 sizeY: rauch1.height,
@@ -862,6 +918,7 @@ class Map {
         }
         currentState = state;
         if (state === stateAlert) {
+            this.currentMap = mapAssetAlert;
             eventWindowSeenAmount = 0;
             this.windowArray.forEach((windowChild) => {
                 windowChild.isSeen = false;
@@ -881,6 +938,18 @@ class Map {
             this.window3.sceneAsset = 'C2.png';
             this.window4.sceneAsset = 'D2.png';
             this.window5.sceneAsset = 'E2.png';
+
+            this.window1.asset = w1AlertHoverAsset;
+            this.window2.asset = w2AlertHoverAsset;
+            this.window3.asset = w3AlertHoverAsset;
+            this.window4.asset = w4AlertHoverAsset;
+            this.window5.asset = w5AlertHoverAsset;
+
+            this.window1.assetSeen = w1AlertSeenAsset;
+            this.window2.assetSeen = w2AlertSeenAsset;
+            this.window3.assetSeen = w3AlertSeenAsset;
+            this.window4.assetSeen = w4AlertSeenAsset;
+            this.window5.assetSeen = w5AlertSeenAsset;
             fireflies.forEach((fireflyChild) => {
                 fireflyChild.maxSpeed = 9;
                 fireflyChild.maxForce = 4;
