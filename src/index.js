@@ -221,6 +221,21 @@ class Cursor {
 
 let cursorInstance = new Cursor();
 
+class TransparentBackdrop {
+    constructor() {
+        this.isVisible = false;
+        this.color = color(0,0,0,125);
+    }
+    display() {
+        if (this.isVisible) {
+            fill(this.color);
+            rect(0, 0, window.innerWidth, window.innerHeight);
+        }
+    }
+}
+
+let transparentBackdrop = new TransparentBackdrop();
+
 class Firefly {
     constructor(x, y, r, color) {
         this.startPosition = createVector(x, y);
@@ -493,8 +508,6 @@ class Flash {
         }
     }
 
-
-
     draw() {
         if (this.enabled) {
             this.update();
@@ -582,22 +595,21 @@ function hideIntroSplash() {
 }
 
 function showOutroSplash() {
+    canClickWindows = false;
+    canDrag = false;
     outroHTML.removeClass('pointer-none');
     gsap.to('.outro', {
-        duration: 1,
+        duration: 5,
         opacity: 1,
         y: 5,
         ease: 'power4',
         stagger: 0.1,
     });
-    // introHTML.class('intro-hidden');
-    canClickWindows = true;
-    canDrag = true;
 }
 
 let flash = new Flash(color(248, 249, 250), 25, 175);
 let intro = new Fade(color(9, 8, 7), 0, 100, 50);
-let outro = new Fade(color(0, 0, 0), 50, 99999, 0, true);
+let outro = new Fade(color(0, 0, 0), 200, 99999, 0, true);
 
 class Drop {
     constructor(maxSpeed, angle) {
@@ -845,6 +857,8 @@ class Map {
                 frameTime: 25,
                 isNonInteractive: true
             });
+
+            // transparentBackdrop.color = color(255,255,255,125);
         }
         currentState = state;
         if (state === stateAlert) {
@@ -886,7 +900,7 @@ class Map {
         this.window4.story3 = storyD3en;
         this.window5.story3 = storyE3en;
         this.window1.sceneAsset = 'A3.png';
-        this.window2.sceneAsset = 'B3.png';
+        this.window2.sceneAsset = '';
         this.window3.sceneAsset = '';
         this.window4.sceneAsset = '';
         this.window5.sceneAsset = 'E3.png';
@@ -948,6 +962,7 @@ class Map {
 
         intro.draw();
         outro.draw();
+        transparentBackdrop.display();
         
         if (currentState === stateDestruction) {
             flash.draw();
@@ -993,6 +1008,14 @@ function windowResized() {
 
     flash.imageX = window.innerWidth / 2 - flash.imageSizeX / 2;
     flash.imageY = window.innerHeight / 2 - flash.imageSizeY / 2;
+    introHTML.position(
+        (window.innerWidth/2 - introHTML.size().width/2),
+        (window.innerHeight/2 - introHTML.size().height/2)
+    );
+    outroHTML.position(
+        (window.innerWidth/2 - introHTML.size().width/2),
+        (window.innerHeight/2 - introHTML.size().height/2)
+    );
     // if on smaller screen and portrait, don't use bg image
     // if (window.innerHeight > window.innerWidth*1.3 && window.innerWidth < 1000) {
     //   background(10);
@@ -1029,6 +1052,7 @@ function mouseClicked() {
         windowDescription.removeClass('window-description');
         windowDescription.class('window-description-hidden');
         scrollingEnabled = true;
+        transparentBackdrop.isVisible = false;
 
         if (
             eventWindowSeenAmount >= 3 /*eventWindowNeededAmount*/ &&
@@ -1057,27 +1081,15 @@ function mouseClicked() {
                 ease: 'power4',
                 stagger: 0.1,
             });
-            // select('.first-text').html(selectedWindow.story1);
-            // select('.second-text').html(selectedWindow.story2);
             select('.third-text').html(selectedWindow.story3);
-            // let descriptionPositionX = mouseX;
-            // let descriptionPositionY = mouseY;
-            // if (mouseX > window.innerWidth * 0.6) {
-            //     descriptionPositionX *= 0.45;
-            // }
-            // if (mouseY > window.innerHeight * 0.6) {
-            //     descriptionPositionY *= 0.45;
-            // }
             windowDescription.position(
                 (window.innerWidth/2 - 300),
                 (window.innerHeight/2 - 200)
             );
 
             windowDescription.class('window-description');
-            // const bgColor = 'rgba(9,8,7,0.95)'
-            // const bgColorBottom = 'rgba(9,8,7,0.85)'
             windowDescription.style(
-                `background-image: linear-gradient(0deg, rgba(9,8,7,0.85), rgba(9,8,7,0.95)), url('./src/assets/${selectedWindow.bgFile}');`
+                `background-image: linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('./src/assets/${selectedWindow.bgFile}');`
             );
             if (selectedWindow.sceneAsset) {
                 select('.bg-scene').style(
@@ -1096,14 +1108,12 @@ function mouseClicked() {
                     `animation: shake 4.0s; animation-iteration-count: infinite;`
                 );
             }
-            // select('.person-one').style(`background-image: url('./src/assets/${selectedWindow.personOneAsset}');`)
-            // select('.person-two').style(`background-image: url('./src/assets/${selectedWindow.personTwoAsset}');`)
-            // select('.person-three').style(`background-image: url('./src/assets/${selectedWindow.personThreeAsset}');`)
-            // select('.frame-two').style(`background-image: url('./src/assets/${selectedWindow.personTwoAsset}');`)
             scrollingEnabled = false;
             // windowDescription.mouseOver(() => {console.log(selectedWindow.currentPositionX)});
             selectedWindow.changeStateChecked();
             select('.third-text').elt.scrollTop = 0;
+
+            transparentBackdrop.isVisible = true;
         }
     });
     return false;

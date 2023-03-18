@@ -110,16 +110,45 @@ body {
     margin: 4px 0px;
 }
 
-.button{
-    width: auto;
-    background-color: #a295b571;
+a {
+    /* width: auto; */
+    background-color: #544866;
     border-radius: 4px;
     padding: 4px 8px;
     cursor: pointer;
+    
+    display: inline-block;
+    /* background-color: rgb(255, 51, 0); */
+    color: rgb(255, 255, 255);
+    text-transform: uppercase;
+    font-size: 24px;
+    width: inherit;
+    /* line-height: 1rem; */
+    padding: 5px 15px;
+    font-weight: 300;
+    text-decoration: none;
+    --x-translate-x: 115%;
+    --x-translate-y: 0;
+    --x-rotate: 0;
+    --x-skew-x: -5deg;
+    --x-skew-y: 0;
+    --x-scale-x: 1;
+    --x-scale-y: 1;
+    transform: translate3d(var(--x-translate-x),var(--x-translate-y),0) rotate(var(--x-rotate)) skewX(var(--x-skew-x)) skewY(var(--x-skew-y)) scaleX(var(--x-scale-x)) scaleY(var(--x-scale-y));
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0s, border-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0s, color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0s, fill 150ms cubic-bezier(0.4, 0, 0.2, 1) 0s, stroke 150ms cubic-bezier(0.4, 0, 0.2, 1) 0s, opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0s, box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1) 0s, transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0s;
+    --x-ring-color: #a295b5;
+    --x-ring-shadow: var(--x-ring-inset, ) 0 0 0 none var(--x-ring-color);
+    box-shadow: var(--x-ring-shadow,0 0 #0000),var(--x-shadow,0 0 #0000);
+}
+  
+/* visited link */
+a:visited {
+  color: rgb(255, 255, 255);
 }
 
-.button:hover{
-    background-color: #a295b571;
+/* mouse over link */
+a:hover {
+  background-color: rgb(255, 94, 45);
 }
 
 /* .intro-hidden {
