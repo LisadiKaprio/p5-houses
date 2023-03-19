@@ -15,8 +15,10 @@
 
 // import gsap from "gsap";
 // const gsap = require("./gsap");
-
 new p5();
+
+let prevButtonHTML;
+let nextButtonHTML;
 
 let houseAsset2;
 let houseAsset3;
@@ -60,10 +62,6 @@ let w5DestructionSeenAsset;
 let selection1Asset;
 let selection2Asset;
 let selection3Asset;
-let gradient1;
-let gradient2;
-let gradient3;
-let gradient4;
 // let bgNormalAAsset;
 // let bgNormalBAsset;
 // let bgNormalCAsset;
@@ -132,10 +130,6 @@ function preload() {
     selection1Asset = loadImage('src/assets/selection1.png');
     selection2Asset = loadImage('src/assets/selection2.png');
     selection3Asset = loadImage('src/assets/selection3.png');
-    gradient1 = loadImage('src/assets/gradient1.png');
-    gradient2 = loadImage('src/assets/gradient2.png');
-    gradient3 = loadImage('src/assets/gradient3.png');
-    gradient4 = loadImage('src/assets/gradient4.png');
     rauch1 = loadImage('src/assets/rauch1.png');
     rauch2 = loadImage('src/assets/rauch2.png');
     // bgNormalAAsset = loadImage('src/assets/wA-1.jpg');
@@ -210,6 +204,9 @@ let stateDestruction = 'stateDestruction';
 let currentState = stateBegin;
 let canClickWindows = false;
 let canDrag = false;
+
+let currentStory = [];
+let currentStoryPart = 0;
 class Cursor {
     constructor() {
         this.radius = cursorRadius;
@@ -974,10 +971,6 @@ class Map {
         this.window4.sceneAsset = '';
         this.window5.sceneAsset = 'E3.png';
     }
-    drawGradient(gradient) {
-        image(gradient, 0, 0);
-        gradient.resize(window.innerWidth, window.innerHeight);
-    }
     drawFireflies(flyGroup) {
         flyGroup.forEach((firefly) => {
             firefly.display();
@@ -1038,24 +1031,24 @@ class Map {
         }
         if (currentState !== stateDestruction) {
             if (eventWindowSeenAmount >= aa && eventWindowSeenAmount <= ab) {
-                this.drawGradient(gradient1);
+                // this.drawGradient(gradient1);
             } else if (
                 eventWindowSeenAmount >= ab + 1 &&
                 eventWindowSeenAmount <= ac
             ) {
-                this.drawGradient(gradient2);
+                // this.drawGradient(gradient2);
             } else if (
                 eventWindowSeenAmount >= ac + 1 &&
                 eventWindowSeenAmount <= ad
             ) {
-                this.drawGradient(gradient3);
+                // this.drawGradient(gradient3);
             } else if (
                 eventWindowSeenAmount >= ad + 1 &&
                 eventWindowSeenAmount <= ae
             ) {
-                this.drawGradient(gradient4);
+                // this.drawGradient(gradient4);
             } else {
-                this.drawGradient(gradient4);
+                // this.drawGradient(gradient4);
             }
         }
         if (currentState === stateAlert) scrollingText.display();
@@ -1122,19 +1115,21 @@ function mouseClicked() {
         windowDescription.class('window-description-hidden');
         scrollingEnabled = true;
         transparentBackdrop.isVisible = false;
+        currentStoryPart = 0;
+        currentStory = [];
 
         if (
-            eventWindowSeenAmount >= 3 /*eventWindowNeededAmount*/ &&
+            eventWindowSeenAmount >= 4 /*eventWindowNeededAmount*/ &&
             currentState === stateBegin
         ) {
             myMap.changeState(stateAlert);
         } else if (
-            eventWindowSeenAmount >= 2 /*(eventWindowNeededAmount/2)*/ &&
+            eventWindowSeenAmount >= 4 /*(eventWindowNeededAmount/2)*/ &&
             currentState === stateAlert
         ) {
             myMap.changeState(stateDestruction);
         } else if (
-            eventWindowSeenAmount >= 2 &&
+            eventWindowSeenAmount >= 4 &&
             currentState === stateDestruction
         ) {
             myMap.changeState(stateOutro);
@@ -1150,12 +1145,16 @@ function mouseClicked() {
                 ease: 'power4',
                 stagger: 0.1,
             });
-            select('.third-text').html(selectedWindow.story3);
+            currentStory = selectedWindow.story3;
+            select('.third-text').html(currentStory[0]);
+            select('#prevPart').addClass('prevPart-disabled');
+            if (currentStory.length > 1) {
+                select('#nextPart').removeClass('nextPart-disabled');
+            }
             windowDescription.position(
                 (window.innerWidth/2 - 300),
                 (window.innerHeight/2 - 200)
             );
-
             windowDescription.class('window-description');
             windowDescription.style(
                 `background-image: linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('./src/assets/${selectedWindow.bgFile}');`
@@ -1180,12 +1179,60 @@ function mouseClicked() {
             scrollingEnabled = false;
             // windowDescription.mouseOver(() => {console.log(selectedWindow.currentPositionX)});
             selectedWindow.changeStateChecked();
-            select('.third-text').elt.scrollTop = 0;
+            // select('.third-text').elt.scrollTop = 0;
 
             transparentBackdrop.isVisible = true;
         }
     });
     return false;
+}
+
+function switchToPrevPart() {
+    if (currentStoryPart > 0){
+        currentStoryPart -= 1;
+        select('#nextPart').removeClass('nextPart-disabled');;
+        if (currentStoryPart === 0) {
+            select('#prevPart').addClass('prevPart-disabled');;
+        }
+        select('.third-text').html(currentStory[currentStoryPart]);
+        gsap.fromTo('.third-text', {
+            duration: 1,
+            opacity: 0,
+            y: 15,
+            ease: 'power4',
+            stagger: 0.1,
+        }, {
+            duration: 1,
+            opacity: 1,
+            y: 0,
+            ease: 'power4',
+            stagger: 0.1,
+        });
+    }
+}
+
+function switchToNextPart() {
+    if (currentStory.length > (currentStoryPart + 1)){
+        currentStoryPart += 1;
+        select('#prevPart').removeClass('prevPart-disabled');;
+        if (currentStory.length <= (currentStoryPart + 1)) {
+            select('#nextPart').addClass('nextPart-disabled');;
+        }
+        select('.third-text').html(currentStory[currentStoryPart]);
+        gsap.fromTo('.third-text', {
+            duration: 1,
+            opacity: 0,
+            y: 15,
+            ease: 'power4',
+            stagger: 0.1,
+        }, {
+            duration: 1,
+            opacity: 1,
+            y: 0,
+            ease: 'power4',
+            stagger: 0.1,
+        });
+    }
 }
 
 function mouseDragged() {
@@ -1234,6 +1281,15 @@ function setup() {
         'Citizens, air alert! Air alert! Air alert! Turn off the light, gas, put out the fire in the stoves. Take personal protective equipment, documents, food and water supplies. Warn the neighbors and help the sick and elderly people to go outside. As soon as possible, get to the protective structure or hide in the area. Keep calm and order. Next, listen carefully to the announcement of the Department of Civil Protection of the regional state administration. ... ... ',
         window.innerHeight
     );
+    nextButtonHTML = document.getElementById("nextPart");
+    prevButtonHTML = document.getElementById("prevPart");
+
+    nextButtonHTML.addEventListener("click", function(){
+        switchToNextPart();
+    });
+    prevButtonHTML.addEventListener("click", function(){
+        switchToPrevPart();
+    });
 
     wholeCanvas = createCanvas(window.innerWidth, window.innerHeight);
     // check if mouse in inside
