@@ -19,6 +19,7 @@ new p5();
 
 let prevButtonHTML;
 let nextButtonHTML;
+let closeButtonHTML;
 
 let houseAsset2;
 let houseAsset3;
@@ -141,14 +142,13 @@ function preload() {
     // bgAlertBAsset = loadImage('src/assets/wB-2.jpg');
     // bgAlertCAsset = loadImage('src/assets/wC-2.jpg');
     // bgAlertDAsset = loadImage('src/assets/wD-2.jpg');
-    // bgAlertEAsset = loadImage('src/assets/wE-2.jpg');    
+    // bgAlertEAsset = loadImage('src/assets/wE-2.jpg');
     // bgDestructionAAsset = loadImage('src/assets/wA-3.jpg');
     // bgDestructionBAsset = loadImage('src/assets/wB-3.jpg');
     // bgDestructionCAsset = loadImage('src/assets/wC-3.jpg');
     // bgDestructionDAsset = loadImage('src/assets/wD-3.jpg');
     // bgDestructionEAsset = loadImage('src/assets/wE-3.jpg');
 
-    
     // sceneA1Asset = loadImage('src/assets/A1.png');
     // sceneA2Asset = loadImage('src/assets/A2.png');
     // sceneA3Asset = loadImage('src/assets/A3.png');
@@ -202,7 +202,7 @@ let stateOutro = 'stateOutro';
 let stateAlert = 'stateAlert';
 let stateDestruction = 'stateDestruction';
 let currentState = stateBegin;
-let canClickWindows = false;
+let canClickWindows = true;
 let canDrag = false;
 
 let currentStory = [];
@@ -255,7 +255,7 @@ let cursorInstance = new Cursor();
 class TransparentBackdrop {
     constructor() {
         this.isVisible = false;
-        this.color = color(0,0,0,125);
+        this.color = color(0, 0, 0, 125);
     }
     display() {
         if (this.isVisible) {
@@ -573,7 +573,7 @@ class Fade {
     update() {
         this.lifetime += 1;
 
-        if (this.lifetime < this.fadeIn)  {
+        if (this.lifetime < this.fadeIn) {
             if (this.isOutro) {
                 showOutroSplash();
             }
@@ -638,7 +638,7 @@ function showOutroSplash() {
     });
 }
 
-let flash = new Flash(color(248, 249, 250), 25, 175);
+let flash = new Flash(color(167, 194, 215), 25, 175);
 let intro = new Fade(color(9, 8, 7), 0, 100, 50);
 let outro = new Fade(color(0, 0, 0), 200, 99999, 0, true);
 
@@ -822,11 +822,11 @@ class Map {
                 positionY: 1219,
                 asset: w3HoverAsset,
                 assetSeen: w3SeenAsset,
-                bgNormal: 'wC-1.jpg',
-                bgAlert: 'wC-2.jpg',
-                bgDestruction: 'wC-3.jpg',
-                sceneAsset: 'C1.png',
-                story3: storyC1en,
+                bgNormal: 'wD-1.jpg',
+                bgAlert: 'wD-2.jpg',
+                bgDestruction: 'wD-3.jpg',
+                sceneAsset: 'D1.png',
+                story3: storyD1en,
             })),
             (this.window4 = new Window({
                 sizeX: w4HoverAsset.width,
@@ -835,11 +835,11 @@ class Map {
                 positionY: 973,
                 asset: w4HoverAsset,
                 assetSeen: w4SeenAsset,
-                bgNormal: 'wD-1.jpg',
-                bgAlert: 'wD-2.jpg',
-                bgDestruction: 'wD-3.jpg',
-                sceneAsset: 'D1.png',
-                story3: storyD1en,
+                bgNormal: 'wC-1.jpg',
+                bgAlert: 'wC-2.jpg',
+                bgDestruction: 'wC-3.jpg',
+                sceneAsset: 'C1.png',
+                story3: storyC1en,
             })),
             (this.window5 = new Window({
                 sizeX: w5HoverAsset.width,
@@ -853,7 +853,7 @@ class Map {
                 bgDestruction: 'wE-3.jpg',
                 sceneAsset: 'E1.png',
                 story3: storyE1en,
-            }))
+            })),
         ];
         this.changeState(stateBegin);
     }
@@ -875,20 +875,20 @@ class Map {
             flash.enabled = true;
             this.window1.bgFile = this.window1.bgDestruction;
             this.window2.bgFile = this.window2.bgDestruction;
-            this.window3.bgFile = this.window3.bgDestruction;
-            this.window4.bgFile = this.window4.bgDestruction;
+            this.window3.bgFile = this.window4.bgDestruction;
+            this.window4.bgFile = this.window3.bgDestruction;
             this.window5.bgFile = this.window5.bgDestruction;
 
             this.window1.asset = w1DestructionHoverAsset;
             this.window2.asset = w2DestructionHoverAsset;
-            this.window3.asset = w3DestructionHoverAsset;
-            this.window4.asset = w4DestructionHoverAsset;
+            this.window3.asset = w4DestructionHoverAsset;
+            this.window4.asset = w3DestructionHoverAsset;
             this.window5.asset = w5DestructionHoverAsset;
 
             this.window1.assetSeen = w1DestructionSeenAsset;
             this.window2.assetSeen = w2DestructionSeenAsset;
-            this.window3.assetSeen = w3DestructionSeenAsset;
-            this.window4.assetSeen = w4DestructionSeenAsset;
+            this.window3.assetSeen = w4DestructionSeenAsset;
+            this.window4.assetSeen = w3DestructionSeenAsset;
             this.window5.assetSeen = w5DestructionSeenAsset;
 
             this.window1.positionX = 419;
@@ -908,7 +908,7 @@ class Map {
                 positionY: 0,
                 asset: [rauch1, rauch2],
                 frameTime: 25,
-                isNonInteractive: true
+                isNonInteractive: true,
             });
 
             // transparentBackdrop.color = color(255,255,255,125);
@@ -922,13 +922,13 @@ class Map {
             });
             this.window1.story3 = storyA2en;
             this.window2.story3 = storyB2en;
-            this.window3.story3 = storyC2en;
-            this.window4.story3 = storyD2en;
+            this.window3.story3 = storyD2en;
+            this.window4.story3 = storyC2en;
             this.window5.story3 = storyE2en;
             this.window1.bgFile = this.window1.bgAlert;
             this.window2.bgFile = this.window2.bgAlert;
-            this.window3.bgFile = this.window3.bgAlert;
-            this.window4.bgFile = this.window4.bgAlert;
+            this.window3.bgFile = this.window4.bgAlert;
+            this.window4.bgFile = this.window3.bgAlert;
             this.window5.bgFile = this.window5.bgAlert;
             this.window1.sceneAsset = 'A2.png';
             this.window2.sceneAsset = 'B2.png';
@@ -938,14 +938,14 @@ class Map {
 
             this.window1.asset = w1AlertHoverAsset;
             this.window2.asset = w2AlertHoverAsset;
-            this.window3.asset = w3AlertHoverAsset;
-            this.window4.asset = w4AlertHoverAsset;
+            this.window3.asset = w4AlertHoverAsset;
+            this.window4.asset = w3AlertHoverAsset;
             this.window5.asset = w5AlertHoverAsset;
 
             this.window1.assetSeen = w1AlertSeenAsset;
             this.window2.assetSeen = w2AlertSeenAsset;
-            this.window3.assetSeen = w3AlertSeenAsset;
-            this.window4.assetSeen = w4AlertSeenAsset;
+            this.window3.assetSeen = w4AlertSeenAsset;
+            this.window4.assetSeen = w3AlertSeenAsset;
             this.window5.assetSeen = w5AlertSeenAsset;
             fireflies.forEach((fireflyChild) => {
                 fireflyChild.maxSpeed = 9;
@@ -962,8 +962,8 @@ class Map {
         });
         this.window1.story3 = storyA3en;
         this.window2.story3 = storyB3en;
-        this.window3.story3 = storyC3en;
-        this.window4.story3 = storyD3en;
+        this.window3.story3 = storyD3en;
+        this.window4.story3 = storyC3en;
         this.window5.story3 = storyE3en;
         this.window1.sceneAsset = 'A3.png';
         this.window2.sceneAsset = '';
@@ -1025,7 +1025,7 @@ class Map {
         intro.draw();
         outro.draw();
         transparentBackdrop.display();
-        
+
         if (currentState === stateDestruction) {
             flash.draw();
         }
@@ -1071,13 +1071,15 @@ function windowResized() {
     flash.imageX = window.innerWidth / 2 - flash.imageSizeX / 2;
     flash.imageY = window.innerHeight / 2 - flash.imageSizeY / 2;
     introHTML.position(
-        (window.innerWidth/2 - introHTML.size().width/2),
-        (window.innerHeight/2 - introHTML.size().height/2)
+        window.innerWidth / 2 - introHTML.size().width / 2,
+        window.innerHeight / 2 - introHTML.size().height / 2
     );
     outroHTML.position(
-        (window.innerWidth/2 - introHTML.size().width/2),
-        (window.innerHeight/2 - introHTML.size().height/2)
+        window.innerWidth / 2 - introHTML.size().width / 2,
+        window.innerHeight / 2 - introHTML.size().height / 2
     );
+
+    scrollingText.xClone = window.innerWidth;
     // if on smaller screen and portrait, don't use bg image
     // if (window.innerHeight > window.innerWidth*1.3 && window.innerWidth < 1000) {
     //   background(10);
@@ -1110,129 +1112,155 @@ function isMouseHoveringOnInteractable() {
 }
 
 function mouseClicked() {
-    if (windowDescription.hasClass('window-description') && isMouseOnCanvas) {
-        windowDescription.removeClass('window-description');
-        windowDescription.class('window-description-hidden');
-        scrollingEnabled = true;
-        transparentBackdrop.isVisible = false;
-        currentStoryPart = 0;
-        currentStory = [];
+    if (canClickWindows) {
+        myMap.windowArray.forEach((selectedWindow) => {
+            if (selectedWindow.isHoveredOver) {
+                gsap.from('.stagger-animation', {
+                    duration: 1,
+                    opacity: 0,
+                    y: 15,
+                    ease: 'power4',
+                    stagger: 0.1,
+                });
+                currentStory = selectedWindow.story3;
+                select('.third-text').html(currentStory[0]);
+                select('#prevPart').addClass('prevPart-disabled');
+                if (currentStory.length > 1) {
+                    select('#nextPart').removeClass('nextPart-disabled');
+                } else if (
+                    currentStory.length === 1 &&
+                    select('#closeWindowDescription').hasClass('close-disabled')
+                ) {
+                    select('#nextPart').addClass('nextPart-disabled');
+                    select('#closeWindowDescription').removeClass(
+                        'close-disabled'
+                    );
+                }
+                windowDescription.position(
+                    window.innerWidth / 2 - 300,
+                    window.innerHeight / 2 - 200
+                );
+                windowDescription.class('window-description');
+                windowDescription.style(
+                    `background-image: linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('./src/assets/${selectedWindow.bgFile}');`
+                );
+                if (selectedWindow.sceneAsset) {
+                    select('.bg-scene').style(
+                        `background-image: url('./src/assets/${selectedWindow.sceneAsset}');`
+                    );
+                } else {
+                    select('.bg-scene').style(`background-image: none;`);
+                }
+                if (currentState === stateAlert) {
+                    select('.bg-scene').style(
+                        `animation: shake 1.0s; animation-iteration-count: infinite;`
+                    );
+                }
+                if (currentState === stateDestruction) {
+                    select('.bg-scene').style(
+                        `animation: shake 4.0s; animation-iteration-count: infinite;`
+                    );
+                }
+                scrollingEnabled = false;
+                // windowDescription.mouseOver(() => {console.log(selectedWindow.currentPositionX)});
+                selectedWindow.changeStateChecked();
+                // select('.third-text').elt.scrollTop = 0;
 
-        if (
-            eventWindowSeenAmount >= 4 /*eventWindowNeededAmount*/ &&
-            currentState === stateBegin
-        ) {
-            myMap.changeState(stateAlert);
-        } else if (
-            eventWindowSeenAmount >= 4 /*(eventWindowNeededAmount/2)*/ &&
-            currentState === stateAlert
-        ) {
-            myMap.changeState(stateDestruction);
-        } else if (
-            eventWindowSeenAmount >= 4 &&
-            currentState === stateDestruction
-        ) {
-            myMap.changeState(stateOutro);
-        }
+                transparentBackdrop.isVisible = true;
+                canClickWindows = false;
+            }
+        });
     }
-    if (!canClickWindows) return;
-    myMap.windowArray.forEach((selectedWindow) => {
-        if (selectedWindow.isHoveredOver) {
-            gsap.from('.stagger-animation', {
+    else if (windowDescription.hasClass('window-description') && isMouseOnCanvas) {
+        closeWindowDescription();
+    }
+    return false;
+}
+
+function switchToPrevPart() {
+    if (currentStoryPart > 0) {
+        currentStoryPart -= 1;
+        select('#nextPart').removeClass('nextPart-disabled');
+        if (currentStoryPart === 0) {
+            select('#prevPart').addClass('prevPart-disabled');
+        }
+        select('.third-text').html(currentStory[currentStoryPart]);
+        gsap.fromTo(
+            '.third-text',
+            {
                 duration: 1,
                 opacity: 0,
                 y: 15,
                 ease: 'power4',
                 stagger: 0.1,
-            });
-            currentStory = selectedWindow.story3;
-            select('.third-text').html(currentStory[0]);
-            select('#prevPart').addClass('prevPart-disabled');
-            if (currentStory.length > 1) {
-                select('#nextPart').removeClass('nextPart-disabled');
+            },
+            {
+                duration: 1,
+                opacity: 1,
+                y: 0,
+                ease: 'power4',
+                stagger: 0.1,
             }
-            windowDescription.position(
-                (window.innerWidth/2 - 300),
-                (window.innerHeight/2 - 200)
-            );
-            windowDescription.class('window-description');
-            windowDescription.style(
-                `background-image: linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.9)), url('./src/assets/${selectedWindow.bgFile}');`
-            );
-            if (selectedWindow.sceneAsset) {
-                select('.bg-scene').style(
-                    `background-image: url('./src/assets/${selectedWindow.sceneAsset}');`
-                );
-            } else {
-                select('.bg-scene').style(`background-image: none;`);
-            }
-            if (currentState === stateAlert) {
-                select('.bg-scene').style(
-                    `animation: shake 1.0s; animation-iteration-count: infinite;`
-                );
-            }
-            if (currentState === stateDestruction) {
-                select('.bg-scene').style(
-                    `animation: shake 4.0s; animation-iteration-count: infinite;`
-                );
-            }
-            scrollingEnabled = false;
-            // windowDescription.mouseOver(() => {console.log(selectedWindow.currentPositionX)});
-            selectedWindow.changeStateChecked();
-            // select('.third-text').elt.scrollTop = 0;
-
-            transparentBackdrop.isVisible = true;
-        }
-    });
-    return false;
-}
-
-function switchToPrevPart() {
-    if (currentStoryPart > 0){
-        currentStoryPart -= 1;
-        select('#nextPart').removeClass('nextPart-disabled');;
-        if (currentStoryPart === 0) {
-            select('#prevPart').addClass('prevPart-disabled');;
-        }
-        select('.third-text').html(currentStory[currentStoryPart]);
-        gsap.fromTo('.third-text', {
-            duration: 1,
-            opacity: 0,
-            y: 15,
-            ease: 'power4',
-            stagger: 0.1,
-        }, {
-            duration: 1,
-            opacity: 1,
-            y: 0,
-            ease: 'power4',
-            stagger: 0.1,
-        });
+        );
     }
 }
 
 function switchToNextPart() {
-    if (currentStory.length > (currentStoryPart + 1)){
+    if (currentStory.length > currentStoryPart + 1) {
         currentStoryPart += 1;
-        select('#prevPart').removeClass('prevPart-disabled');;
-        if (currentStory.length <= (currentStoryPart + 1)) {
-            select('#nextPart').addClass('nextPart-disabled');;
+        select('#prevPart').removeClass('prevPart-disabled');
+        if (currentStory.length <= currentStoryPart + 1) {
+            select('#nextPart').addClass('nextPart-disabled');
         }
         select('.third-text').html(currentStory[currentStoryPart]);
-        gsap.fromTo('.third-text', {
-            duration: 1,
-            opacity: 0,
-            y: 15,
-            ease: 'power4',
-            stagger: 0.1,
-        }, {
-            duration: 1,
-            opacity: 1,
-            y: 0,
-            ease: 'power4',
-            stagger: 0.1,
-        });
+        gsap.fromTo(
+            '.third-text',
+            {
+                duration: 1,
+                opacity: 0,
+                y: 15,
+                ease: 'power4',
+                stagger: 0.1,
+            },
+            {
+                duration: 1,
+                opacity: 1,
+                y: 0,
+                ease: 'power4',
+                stagger: 0.1,
+            }
+        );
     }
+    if (currentStory.length === currentStoryPart + 1)
+        select('#closeWindowDescription').removeClass('close-disabled');
+}
+
+function closeWindowDescription() {
+    // windowDescription.removeClass('window-description');
+    windowDescription.class('window-description-hidden');
+    select('#closeWindowDescription').addClass('close-disabled');
+    scrollingEnabled = true;
+    transparentBackdrop.isVisible = false;
+    currentStoryPart = 0;
+    currentStory = [];
+
+    if (
+        eventWindowSeenAmount >= 4 /*eventWindowNeededAmount*/ &&
+        currentState === stateBegin
+    ) {
+        myMap.changeState(stateAlert);
+    } else if (
+        eventWindowSeenAmount >= 4 /*(eventWindowNeededAmount/2)*/ &&
+        currentState === stateAlert
+    ) {
+        myMap.changeState(stateDestruction);
+    } else if (
+        eventWindowSeenAmount >= 4 &&
+        currentState === stateDestruction
+    ) {
+        myMap.changeState(stateOutro);
+    }
+    canClickWindows = true;
 }
 
 function mouseDragged() {
@@ -1281,14 +1309,18 @@ function setup() {
         'Citizens, air alert! Air alert! Air alert! Turn off the light, gas, put out the fire in the stoves. Take personal protective equipment, documents, food and water supplies. Warn the neighbors and help the sick and elderly people to go outside. As soon as possible, get to the protective structure or hide in the area. Keep calm and order. Next, listen carefully to the announcement of the Department of Civil Protection of the regional state administration. ... ... ',
         window.innerHeight
     );
-    nextButtonHTML = document.getElementById("nextPart");
-    prevButtonHTML = document.getElementById("prevPart");
+    nextButtonHTML = document.getElementById('nextPart');
+    prevButtonHTML = document.getElementById('prevPart');
+    closeButtonHTML = document.getElementById('closeWindowDescription');
 
-    nextButtonHTML.addEventListener("click", function(){
+    nextButtonHTML.addEventListener('click', function () {
         switchToNextPart();
     });
-    prevButtonHTML.addEventListener("click", function(){
+    prevButtonHTML.addEventListener('click', function () {
         switchToPrevPart();
+    });
+    closeButtonHTML.addEventListener('click', function () {
+        closeWindowDescription();
     });
 
     wholeCanvas = createCanvas(window.innerWidth, window.innerHeight);
@@ -1316,8 +1348,8 @@ function setup() {
     windowDescription = select('.window-description-hidden');
     introHTML = select('.intro');
     introHTML.position(
-        (window.innerWidth/2 - introHTML.size().width/2),
-        (window.innerHeight/2 - introHTML.size().height/2)
+        window.innerWidth / 2 - introHTML.size().width / 2,
+        window.innerHeight / 2 - introHTML.size().height / 2
     );
     gsap.from('.fade-out-animation', {
         duration: 1,
@@ -1329,10 +1361,10 @@ function setup() {
 
     outroHTML = select('.outro');
     outroHTML.position(
-        (window.innerWidth/2 - introHTML.size().width/2),
-        (window.innerHeight/2 - introHTML.size().height/2)
+        window.innerWidth / 2 - introHTML.size().width / 2,
+        window.innerHeight / 2 - introHTML.size().height / 2
     );
-    gsap.set('.outro', {opacity: 0});
+    gsap.set('.outro', { opacity: 0 });
 
     myMap.setup();
 
