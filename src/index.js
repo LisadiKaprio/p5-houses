@@ -63,6 +63,7 @@ let w5DestructionSeenAsset;
 let selection1Asset;
 let selection2Asset;
 let selection3Asset;
+let RobotoBlack;
 // let bgNormalAAsset;
 // let bgNormalBAsset;
 // let bgNormalCAsset;
@@ -93,6 +94,8 @@ let selection3Asset;
 // let sceneE3Asset;
 
 function preload() {
+    RobotoBlack = loadFont('src/assets/Roboto-Black.ttf');
+
     bombAsset = loadImage('src/assets/bomb1.gif');
     trashAsset = loadImage('src/assets/raindrop.png');
     mapAsset = loadImage('src/assets/map-1.jpg');
@@ -110,23 +113,23 @@ function preload() {
     w5SeenAsset = loadImage('src/assets/w5-read.png');
     w1AlertHoverAsset = loadImage('src/assets/w1-a-hover.jpg');
     w2AlertHoverAsset = loadImage('src/assets/w2-a-hover.jpg');
-    w3AlertHoverAsset = loadImage('src/assets/w4-a-hover.jpg');
-    w4AlertHoverAsset = loadImage('src/assets/w3-a-hover.jpg');
+    w3AlertHoverAsset = loadImage('src/assets/w3-a-hover.jpg');
+    w4AlertHoverAsset = loadImage('src/assets/w4-a-hover.jpg');
     w5AlertHoverAsset = loadImage('src/assets/w5-a-hover.jpg');
     w1AlertSeenAsset = loadImage('src/assets/w1-a-read.jpg');
     w2AlertSeenAsset = loadImage('src/assets/w2-a-read.jpg');
-    w3AlertSeenAsset = loadImage('src/assets/w4-a-read.jpg');
-    w4AlertSeenAsset = loadImage('src/assets/w3-a-read.jpg');
+    w3AlertSeenAsset = loadImage('src/assets/w3-a-read.jpg');
+    w4AlertSeenAsset = loadImage('src/assets/w4-a-read.jpg');
     w5AlertSeenAsset = loadImage('src/assets/w5-a-read.jpg');
     w1DestructionHoverAsset = loadImage('src/assets/w1-d-hover.jpg');
     w2DestructionHoverAsset = loadImage('src/assets/w2-d-hover.jpg');
-    w3DestructionHoverAsset = loadImage('src/assets/w4-d-hover.jpg');
-    w4DestructionHoverAsset = loadImage('src/assets/w3-d-hover.jpg');
+    w3DestructionHoverAsset = loadImage('src/assets/w3-d-hover.jpg');
+    w4DestructionHoverAsset = loadImage('src/assets/w4-d-hover.jpg');
     w5DestructionHoverAsset = loadImage('src/assets/w5-d-hover.jpg');
     w1DestructionSeenAsset = loadImage('src/assets/w1-d-read.jpg');
     w2DestructionSeenAsset = loadImage('src/assets/w2-d-read.jpg');
-    w3DestructionSeenAsset = loadImage('src/assets/w4-d-read.jpg');
-    w4DestructionSeenAsset = loadImage('src/assets/w3-d-read.jpg');
+    w3DestructionSeenAsset = loadImage('src/assets/w3-d-read.jpg');
+    w4DestructionSeenAsset = loadImage('src/assets/w4-d-read.jpg');
     w5DestructionSeenAsset = loadImage('src/assets/w5-d-read.jpg');
     selection1Asset = loadImage('src/assets/selection1.png');
     selection2Asset = loadImage('src/assets/selection2.png');
@@ -440,6 +443,7 @@ class ScrollingText {
         noStroke();
         textSize(this.textSize);
         textStyle(BOLD);
+        textFont(RobotoBlack);
         fill(200);
         text(this.text, this.x, this.y - this.textSize);
         fill(170);
@@ -1306,7 +1310,7 @@ function stayInBoundsY(inputValueY) {
 function setup() {
     frameRate(30);
     scrollingText = new ScrollingText(
-        'Citizens, air alert! Air alert! Air alert! Turn off the light, gas, put out the fire in the stoves. Take personal protective equipment, documents, food and water supplies. Warn the neighbors and help the sick and elderly people to go outside. As soon as possible, get to the protective structure or hide in the area. Keep calm and order. Next, listen carefully to the announcement of the Department of Civil Protection of the regional state administration. ... ... ',
+        'CITIZENS, AIR ALERT! AIR ALERT! AIR ALERT! TURN OFF THE LIGHT, GAS, PUT OUT THE FIRE IN THE STOVES. TAKE PERSONAL PROTECTIVE EQUIPMENT, DOCUMENTS, FOOD AND WATER SUPPLIES. WARN THE NEIGHBORS AND HELP THE SICK AND ELDERLY PEOPLE TO GO OUTSIDE. AS SOON AS POSSIBLE, GET TO THE PROTECTIVE STRUCTURE OR HIDE IN THE AREA. KEEP CALM AND ORDER. NEXT, LISTEN CAREFULLY TO THE ANNOUNCEMENT OF THE DEPARTMENT OF CIVIL PROTECTION OF THE REGIONAL STATE ADMINISTRATION. ... ... ',
         window.innerHeight
     );
     nextButtonHTML = document.getElementById('nextPart');
