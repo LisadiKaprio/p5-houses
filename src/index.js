@@ -520,6 +520,7 @@ class Flash {
         }
         // when getting opaque
         else if (this.lifetime <= this.time) {
+            canClickWindows = false;
             this.alpha = map(
                 abs(this.lifetime - this.time),
                 0,
@@ -931,13 +932,13 @@ class Map {
             this.window5.story3 = storyE2en;
             this.window1.bgFile = this.window1.bgAlert;
             this.window2.bgFile = this.window2.bgAlert;
-            this.window3.bgFile = this.window4.bgAlert;
-            this.window4.bgFile = this.window3.bgAlert;
+            this.window3.bgFile = this.window3.bgAlert;
+            this.window4.bgFile = this.window4.bgAlert;
             this.window5.bgFile = this.window5.bgAlert;
             this.window1.sceneAsset = 'A2.png';
             this.window2.sceneAsset = 'B2.png';
-            this.window3.sceneAsset = 'C2.png';
-            this.window4.sceneAsset = 'D2.png';
+            this.window3.sceneAsset = 'D2.png';
+            this.window4.sceneAsset = 'C2.png';
             this.window5.sceneAsset = 'E2.png';
 
             this.window1.asset = w1AlertHoverAsset;
@@ -1116,7 +1117,10 @@ function isMouseHoveringOnInteractable() {
 }
 
 function mouseClicked() {
-    if (canClickWindows) {
+    if (windowDescription.hasClass('window-description') && isMouseOnCanvas) {
+        closeWindowDescription();
+        return false;
+    } else if (canClickWindows) {
         myMap.windowArray.forEach((selectedWindow) => {
             if (selectedWindow.isHoveredOver) {
                 gsap.from('.stagger-animation', {
@@ -1174,11 +1178,8 @@ function mouseClicked() {
                 canClickWindows = false;
             }
         });
+        return false;
     }
-    else if (windowDescription.hasClass('window-description') && isMouseOnCanvas) {
-        closeWindowDescription();
-    }
-    return false;
 }
 
 function switchToPrevPart() {
@@ -1259,7 +1260,7 @@ function closeWindowDescription() {
     ) {
         myMap.changeState(stateDestruction);
     } else if (
-        eventWindowSeenAmount >= 4 &&
+        eventWindowSeenAmount >= 5 &&
         currentState === stateDestruction
     ) {
         myMap.changeState(stateOutro);
