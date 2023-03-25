@@ -60,9 +60,7 @@ let w4DestructionHoverAsset;
 let w4DestructionSeenAsset;
 let w5DestructionHoverAsset;
 let w5DestructionSeenAsset;
-let selection1Asset;
-let selection2Asset;
-let selection3Asset;
+
 let RobotoBlack;
 // let bgNormalAAsset;
 // let bgNormalBAsset;
@@ -131,9 +129,6 @@ function preload() {
     w3DestructionSeenAsset = loadImage('src/assets/w3-d-read.jpg');
     w4DestructionSeenAsset = loadImage('src/assets/w4-d-read.jpg');
     w5DestructionSeenAsset = loadImage('src/assets/w5-d-read.jpg');
-    selection1Asset = loadImage('src/assets/selection1.png');
-    selection2Asset = loadImage('src/assets/selection2.png');
-    selection3Asset = loadImage('src/assets/selection3.png');
     rauch1 = loadImage('src/assets/rauch1.png');
     rauch2 = loadImage('src/assets/rauch2.png');
     // bgNormalAAsset = loadImage('src/assets/wA-1.jpg');
